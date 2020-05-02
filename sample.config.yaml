@@ -1,0 +1,38 @@
+# Welcome to the sample config file
+# Below you will find various config sections and options
+# Default values are shown
+
+# Options for connecting to the bot's Matrix account
+matrix:
+  # The Matrix User ID of the bot account
+  user_id: "@bot:example.com"
+  # The access token of the bot account
+  access_token: ""
+  # The device ID given on login
+  device_id: ABCDEFGHIJ
+  # The URL of the homeserver to connect to
+  homeserver_url: https://example.com
+
+database:
+  # The path to the database
+  filepath: "bot.db"
+
+# Logging setup
+logging:
+  # Logging level
+  # Allowed levels are 'INFO', 'WARNING', 'ERROR', 'DEBUG' where DEBUG is most verbose
+  level: INFO
+  # Configure logging to a file
+  file_logging:
+    # Whether logging to a file is enabled
+    enabled: false
+    # The path to the file to log to. May be relative or absolute
+    filepath: bot.log
+  # Configure logging to the console output
+  console_logging:
+    # Whether logging to the console is enabled
+    enabled: true
+
+monzo:
+  # Access token to the Monzo API.
+  access_token: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJlYiI6Ik9CcDNLYXVPbkxZb0hxd1BqMWY0IiwianRpIjoiYWNjdG9rXzAwMDA5dWM2Zk1vWVRaakpWTlQ2engiLCJ0eXAiOiJhdCIsInYiOiI2In0.-3gJBj6Nbnu1j1jnPm1bbzzFG31M1ZrmxtTm60XaelTrss4iVokVoFmsl_04rCctXD-l0-si786YteoRDOffXg"

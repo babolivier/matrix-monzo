@@ -1,0 +1,19 @@
+# PyCharm
+.idea/
+
+# Local database
+*.db
+*.*_devices
+
+# Config file
+config.yaml
+
+# Python
+__pycache__/
+*.pyc
+
+# Log files
+*.log
+
+# Let's ignore this one for now
+monzo_utils
