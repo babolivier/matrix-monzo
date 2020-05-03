@@ -9,10 +9,11 @@ from messages import messages
 class VerifyDeviceCommand(Command):
     PREFIX = "verify device"
     PARAMS = ["device_id"]
+    HELP_DOC = "Add the provided device to the list of verified devices."
 
     @runner
     async def run(self, event: RoomMessageText) -> Dict[str, str]:
-        params = self.body_to_params(event.body)
+        params = self.string_to_params(event.body)
 
         device_id = params["device_id"]
 

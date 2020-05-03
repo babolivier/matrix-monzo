@@ -7,7 +7,7 @@ from utils import to_event_content
 from messages import messages
 from utils.instance import Instance
 
-commands = ["verify_device", "say"]
+COMMANDS = ["verify_device", "say", "show"]
 
 
 class InvalidParamsException(Exception):
@@ -42,11 +42,16 @@ class Command(abc.ABC):
     def PARAMS(self) -> List[str]:
         pass
 
+    @property
+    @abc.abstractmethod
+    def HELP_DOC(self) -> str:
+        pass
+
     @abc.abstractmethod
     async def run(self, event: RoomMessageText) -> Dict[str, str]:
         pass
 
-    def body_to_params(self, body: str) -> Dict[str, str]:
+    def string_to_params(self, body: str) -> Dict[str, str]:
         params_s = body[len(self.PREFIX):]
         params_s.strip()
         params_l = params_s.split()
@@ -69,3 +74,37 @@ class Command(abc.ABC):
             params[self.PARAMS[i]] = params_l[i]
 
         return params
+
+    def usage(self):
+        if not self.PARAMS:
+            return self.PREFIX
+
+        expected_params = " ".join([f'[{param}]' for param in self.PARAMS])
+        return f'{self.PREFIX} {expected_params}'
+
+
+class MetaCommand(Command, abc.ABC):
+    @property
+    @abc.abstractmethod
+    def SUB_COMMANDS(self) -> List[str]:
+        pass
+
+    @abc.abstractmethod
+    def get_help_content(self) -> Dict[str, str]:
+        pass
+
+
+class SubCommand(Command, abc.ABC):
+    @property
+    @abc.abstractmethod
+    def PARENT(self) -> str:
+        pass
+
+    @abc.abstractmethod
+    async def run_with_params(
+            self, params: str, event: RoomMessageText,
+    ) -> Dict[str, str]:
+        pass
+
+    def usage(self):
+        return f'{self.PARENT} {super().usage()}'

@@ -21,8 +21,12 @@ class _Messages:
     def get_optional(self, message_id: str) -> Optional[str]:
         return self._dict.get(message_id)
 
-    def get_content(self, message_id: str, **kwargs) -> Dict[str, str]:
-        return to_event_content(self.get(message_id, **kwargs))
+    def get_content(
+            self, message_id: str, format_markdown=False, **kwargs,
+    ) -> Dict[str, str]:
+        return to_event_content(
+            self.get(message_id, **kwargs), format_markdown=format_markdown,
+        )
 
 
 messages = _Messages("res/messages.json")

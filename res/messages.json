@@ -3,5 +3,8 @@
   "unknown_command": "Unknown command. Type \"help\" to see available commands.",
   "invalid_params": "Invalid number of parameters: expected {expected_params_number}, got {actual_params_number}. Usage: {usage}.",
   "unknown_device": "No device with ID {device_id} for user {user_id}.",
-  "device_verified": "Added device {device_id} to the list of verified devices."
+  "device_verified": "Added device {device_id} to the list of verified devices.",
+  "help": "The following commands are available:\n\n{commands}\n\nThe following meta-commands are available (type \"help [meta-command]\" to get the help of a meta-command):\n\n{meta_commands}",
+  "help_entry": "* `{prefix}`: {help_doc}. Usage: <u>{usage}</u>",
+  "help_meta_command": "`{prefix}`: {help_doc}\nAvailable sub-commands:\n\n{sub_commands}"
 }
