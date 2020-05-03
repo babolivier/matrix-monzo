@@ -18,20 +18,29 @@ class Callbacks:
         if event.sender != self.instance.config.owner_id:
             return
 
-        device = self.instance.nio_client.device_store.device_from_sender_key(
-            event.sender, event.sender_key,
-        )
-        if not self._user_has_verified_device(event.sender):
-            self.instance.nio_client.verify_device(device)
-        elif not self.instance.nio_client.store.is_device_verified(device):
-            await self.instance.nio_client.room_send(
-                room.room_id,
-                "m.room.message",
-                messages.get_content("unverified_device", device_id=device.device_id),
-            )
-            return
+        try:
+            await self.instance.nio_client.room_typing(room.room_id)
 
-        res = await self.commander.dispatch(event)
+            device = self.instance.nio_client.device_store.device_from_sender_key(
+                event.sender, event.sender_key,
+            )
+            if not self._user_has_verified_device(event.sender):
+                self.instance.nio_client.verify_device(device)
+            elif not self.instance.nio_client.store.is_device_verified(device):
+                await self.instance.nio_client.room_send(
+                    room.room_id,
+                    "m.room.message",
+                    messages.get_content("unverified_device", device_id=device.device_id),
+                )
+                return
+
+            res = await self.commander.dispatch(event)
+        except Exception as e:
+            logger.exception(e)
+            res = messages.get_content("unknown_error")
+        finally:
+            await self.instance.nio_client.room_typing(room.room_id, typing_state=False)
+
         await self.instance.nio_client.room_send(
             room.room_id, "m.room.message", res, ignore_unverified_devices=True,
         )
