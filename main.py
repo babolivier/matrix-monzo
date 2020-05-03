@@ -4,7 +4,13 @@ import asyncio
 import logging
 
 from monzo import Monzo
-from nio import AsyncClient, AsyncClientConfig, RoomMessageText, InviteEvent
+from nio import (
+    AsyncClient,
+    AsyncClientConfig,
+    RoomMessageText,
+    RoomMemberEvent,
+    InviteEvent,
+)
 
 from callbacks import Callbacks
 from config import Config
@@ -47,6 +53,7 @@ async def main():
     callbacks = Callbacks(instance)
     nio_client.add_event_callback(callbacks.message, (RoomMessageText,))
     nio_client.add_event_callback(callbacks.invite, (InviteEvent,))
+    nio_client.add_event_callback(callbacks.member, (RoomMemberEvent,))
 
     # First do a sync with full_state = true to retrieve the state of the room.
     await nio_client.sync(full_state=True)

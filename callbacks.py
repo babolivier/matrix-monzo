@@ -1,6 +1,7 @@
+import asyncio
 import logging
 
-from nio import InviteEvent, JoinError, MatrixRoom, RoomMessageText
+from nio import InviteEvent, JoinError, MatrixRoom, RoomMemberEvent, RoomMessageText
 
 from commander import Commander
 from messages import messages
@@ -77,4 +78,15 @@ class Callbacks:
                 logger.info(f"Joined {room.room_id}")
                 break
 
-        return None
+    async def member(self, room: MatrixRoom, event: RoomMemberEvent):
+        # FIXME: There seems to be a race somewhere that makes nio see membership updates
+        #  (invites/joins) twice, causing the welcome message to be sent twice.
+
+        if event.membership != "join" or event.state_key != self.instance.config.user_id:
+            return
+
+        await self.instance.nio_client.room_send(
+            room.room_id,
+            "m.room.message",
+            messages.get_content("welcome_message", format_markdown=True),
+        )
