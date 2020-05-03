@@ -12,6 +12,7 @@ matrix:
   device_id: ABCDEFGHIJ
   # The URL of the homeserver to connect to
   homeserver_url: https://example.com
+  store_path: /path/to/store/directory
 
 database:
   # The path to the database

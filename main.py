@@ -30,7 +30,7 @@ async def main():
         config.user_id,
         device_id=config.device_id,
         config=nio_client_config,
-        store_path="/home/brendan/Documents/matrix-monzo-next/nio_store",
+        store_path=config.store_path,
     )
 
     # Initialise the monzo client

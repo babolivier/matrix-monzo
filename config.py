@@ -74,6 +74,10 @@ class Config(object):
         elif not re.match("@.*:.*", self.user_id):
             raise ConfigError("matrix.owner_id must be in the form @name:domain")
 
+        self.store_path = matrix.get("store_path")
+        if not self.store_path:
+            raise ConfigError("matrix.store_path is a required field")
+
         monzo = config.get("monzo", {})
 
         self.monzo_access_token = monzo.get("access_token")
