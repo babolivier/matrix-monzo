@@ -15,5 +15,6 @@ __pycache__/
 # Log files
 *.log
 
-# Let's ignore this one for now
+# Let's ignore these ones for now
 monzo_utils
+delta

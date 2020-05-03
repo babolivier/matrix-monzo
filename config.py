@@ -46,8 +46,7 @@ class Config(object):
             logger.addHandler(handler)
 
         # Database setup
-        database_dict = config.get("database", {})
-        self.database_filepath = database_dict.get("filepath")
+        self.database = config.get("database", {})
 
         # Matrix bot account setup
         matrix = config.get("matrix", {})

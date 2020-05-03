@@ -9,6 +9,7 @@ from nio import AsyncClient, AsyncClientConfig, RoomMessageText, InviteEvent
 from callbacks import Callbacks
 from config import Config
 from utils.instance import Instance
+from storage import Storage
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +37,9 @@ async def main():
     # Initialise the monzo client
     monzo_client = Monzo(config.monzo_access_token)
 
-    instance = Instance(config, nio_client, monzo_client)
+    storage = Storage(config.database)
+
+    instance = Instance(config, nio_client, monzo_client, storage)
 
     await nio_client.login(config.password, "monzo_bot")
 
@@ -47,6 +50,8 @@ async def main():
 
     # First do a sync with full_state = true to retrieve the state of the room.
     await nio_client.sync(full_state=True)
+
+    logger.info("Registered handlers, now syncing.")
 
     await nio_client.sync_forever(30000)
 

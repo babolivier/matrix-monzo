@@ -15,8 +15,10 @@ matrix:
   store_path: /path/to/store/directory
 
 database:
-  # The path to the database
-  filepath: "bot.db"
+  user: matrix_monzo
+  host: localhost
+  password: "monzo"
+  database: matrix_monzo
 
 # Logging setup
 logging:

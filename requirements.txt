@@ -2,4 +2,6 @@ matrix-nio>=0.10
 Markdown>=3.1.1
 PyYAML>=5.1.2
 monzo>=0.10.0
-python-dateutil>=2.8.1
+psycopg2-binary>=2.8.5
+# We're using experimental psycopg3 in combination with psycopg2, but only for type hints.
+-e git+https://github.com/psycopg/psycopg3.git#egg=psycopg3
