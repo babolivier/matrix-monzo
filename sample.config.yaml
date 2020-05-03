@@ -36,4 +36,4 @@ logging:
 
 monzo:
   # Access token to the Monzo API.
-  access_token: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJlYiI6Ik9CcDNLYXVPbkxZb0hxd1BqMWY0IiwianRpIjoiYWNjdG9rXzAwMDA5dWM2Zk1vWVRaakpWTlQ2engiLCJ0eXAiOiJhdCIsInYiOiI2In0.-3gJBj6Nbnu1j1jnPm1bbzzFG31M1ZrmxtTm60XaelTrss4iVokVoFmsl_04rCctXD-l0-si786YteoRDOffXg"
+  access_token: "SOME_TOKEN"
