@@ -11,7 +11,7 @@ from utils.instance import Instance
 class ShowCommand(MetaCommand):
     PREFIX = "show"
     PARAMS = ["entity"]
-    SUB_COMMANDS = ["accounts"]
+    SUB_COMMANDS = ["accounts", "all_accounts"]
     HELP_DOC = "Show the desired entity."
 
     def __init__(self, instance: Instance):
@@ -22,9 +22,8 @@ class ShowCommand(MetaCommand):
         self.sub_commands = {}  # type: Dict[str, SubCommand]
         for sub_command in self.SUB_COMMANDS:
             module = importlib.import_module(f'{__name__}.{sub_command}')
-            self.sub_commands[sub_command] = module.command_class(instance)
-
-        self.trailing_words = ["my", "all"]
+            command = module.command_class(instance)
+            self.sub_commands[command.PREFIX] = command
 
         self._build_help()
 
@@ -35,33 +34,11 @@ class ShowCommand(MetaCommand):
     async def run(self, event: RoomMessageText) -> Dict[str, str]:
         params = event.body[len(self.PREFIX):].strip()
 
-        params = self._strip_trailing_words(params)
-
-        split_params = params.split()
-
         for name, sub_command in self.sub_commands.items():
-            if name == split_params[0]:
-                return await sub_command.run_with_params(
-                    " ".join(split_params[1:]), event,
-                )
+            if params.startswith(name):
+                return await sub_command.run_with_params(params, event)
 
         return messages.get_content("unknown_command")
-
-    def _strip_trailing_words(self, body: str) -> str:
-        for word in self.trailing_words:
-            preceding_space = f' {word} '
-            no_preceding_space = f'{word} '
-
-            to_replace = None
-            if body.startswith(preceding_space):
-                to_replace = preceding_space
-            elif body.startswith(no_preceding_space):
-                to_replace = no_preceding_space
-
-            if to_replace:
-                body = body.replace(to_replace, "")
-
-        return body
 
     def _build_help(self):
         sub_commands_help = []

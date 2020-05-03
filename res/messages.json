@@ -9,5 +9,6 @@
   "help_entry": "* `{prefix}`: {help_doc}. Usage: <u>{usage}</u>",
   "help_meta_command": "`{prefix}`: {help_doc}\nAvailable sub-commands:\n\n{sub_commands}",
   "accounts": "Available accounts:\n\n{accounts}",
-  "account_entry": "* **{description}**, balance: {balance} {currency}"
+  "account_entry": "* **{description}**, balance: {balance} {currency} (internal ID: {id})",
+  "account_entry_closed": "* <strike>**{description}**, balance: {balance} {currency} (internal ID: {id})</strike>"
 }
