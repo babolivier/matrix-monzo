@@ -8,8 +8,8 @@ from nio import AsyncClient, AsyncClientConfig, RoomMessageText, InviteEvent
 
 from callbacks import Callbacks
 from config import Config
-from utils.instance import Instance
 from storage import Storage
+from utils.instance import Instance
 
 logger = logging.getLogger(__name__)
 
