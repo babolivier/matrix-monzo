@@ -8,6 +8,7 @@ from nio import AsyncClient, AsyncClientConfig, RoomMessageText, InviteEvent
 
 from callbacks import Callbacks
 from config import Config
+from utils.instance import Instance
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +36,12 @@ async def main():
     # Initialise the monzo client
     monzo_client = Monzo(config.monzo_access_token)
 
+    instance = Instance(config, nio_client, monzo_client)
+
     await nio_client.login(config.password, "monzo_bot")
 
     # Set up event callbacks
-    callbacks = Callbacks(config, nio_client, monzo_client)
+    callbacks = Callbacks(instance)
     nio_client.add_event_callback(callbacks.message, (RoomMessageText,))
     nio_client.add_event_callback(callbacks.invite, (InviteEvent,))
 

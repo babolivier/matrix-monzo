@@ -1,12 +1,11 @@
 import abc
 from typing import Dict, List
 
-from monzo import Monzo
-from nio import AsyncClient, RoomMessageText
+from nio import RoomMessageText
 
-from config import Config
 from utils import to_event_content
 from messages import messages
+from utils.instance import Instance
 
 commands = ["verify_device", "say"]
 
@@ -30,10 +29,8 @@ def runner(f):
 
 
 class Command(abc.ABC):
-    def __init__(self, config: Config, nio_client: AsyncClient, monzo_client: Monzo):
-        self.config = config
-        self.nio_client = nio_client
-        self.monzo_client = monzo_client
+    def __init__(self, instance: Instance):
+        self.instance = instance
 
     @property
     @abc.abstractmethod

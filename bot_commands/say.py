@@ -1,6 +1,6 @@
 from nio import RoomMessageText
 
-from . import Command, runner
+from bot_commands import Command, runner
 
 
 class SayCommand(Command):

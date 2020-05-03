@@ -1,24 +1,21 @@
 import importlib
 from typing import Dict, List
 
-from monzo import Monzo
-from nio import AsyncClient, RoomMessageText
+from nio import RoomMessageText
 
 import bot_commands
-from config import Config
 from messages import messages
+from utils.instance import Instance
 
 
 class Commander:
-    def __init__(self, config: Config, nio_client: AsyncClient, monzo_client: Monzo):
-        self.config = config
-        self.nio_client = nio_client
-        self.monzo_client = monzo_client
+    def __init__(self, instance: Instance):
+        self.instance = instance
 
         self.commands = []  # type: List[bot_commands.Command]
         for command_name in bot_commands.commands:
             module = importlib.import_module(f'{bot_commands.__name__}.{command_name}')
-            self.commands.append(module.command_class(config, nio_client, monzo_client))
+            self.commands.append(module.command_class(instance))
 
     async def dispatch(self, event: RoomMessageText) -> Dict[str, str]:
         for command in self.commands:
