@@ -3,8 +3,8 @@ from typing import Dict, List
 
 from nio import RoomMessageText
 
-from utils import to_event_content
 from messages import messages
+from utils import to_event_content
 from utils.instance import Instance
 
 COMMANDS = ["verify_device", "say", "show"]

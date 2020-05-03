@@ -1,8 +1,10 @@
 import logging
-import re
 import os
-import yaml
+import re
 import sys
+
+import yaml
+
 from errors import ConfigError
 
 logger = logging.getLogger()

@@ -5,7 +5,6 @@ from nio import RoomMessageText
 
 import bot_commands
 from messages import messages
-from utils import to_event_content
 from utils.instance import Instance
 
 
