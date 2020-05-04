@@ -1,7 +1,8 @@
 import asyncio
 import logging
+import traceback
 
-from nio import InviteEvent, JoinError, MatrixRoom, RoomMemberEvent, RoomMessageText
+from nio import InviteMemberEvent, JoinError, MatrixRoom, RoomMemberEvent, RoomMessageText
 
 from commander import Commander
 from messages import messages
@@ -56,15 +57,18 @@ class Callbacks:
 
         return verified
 
-    async def invite(self, room: MatrixRoom, event: InviteEvent) -> None:
+    async def invite(self, room: MatrixRoom, event: InviteMemberEvent) -> None:
         """Callback for when an invite is received. Join the room specified in the invite
         """
-        logger.debug(f"Got invite to {room.room_id} from {event.sender}.")
-
-        # Only react to messages from the configured user.
-        if event.sender != self.instance.config.owner_id:
-            logger.debug("Ignoring the invite")
+        # Only react to invites to us from the configured user.
+        if (
+            event.membership != "invite"
+            or event.sender != self.instance.config.owner_id
+            or event.state_key != self.instance.config.user_id
+        ):
             return
+
+        logger.info(f"Got invite to {room.room_id} from {event.sender}.")
 
         # Attempt to join 3 times before giving up
         for attempt in range(3):
@@ -79,9 +83,7 @@ class Callbacks:
                 break
 
     async def member(self, room: MatrixRoom, event: RoomMemberEvent):
-        # FIXME: There seems to be a race somewhere that makes nio see membership updates
-        #  (invites/joins) twice, causing the welcome message to be sent twice.
-
+        # Currently broken due to https://github.com/matrix-org/synapse/issues/3769
         if event.membership != "join" or event.state_key != self.instance.config.user_id:
             return
 
