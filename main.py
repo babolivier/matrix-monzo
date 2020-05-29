@@ -8,6 +8,7 @@ from nio import (
     AsyncClient,
     AsyncClientConfig,
     InviteMemberEvent,
+    LoginError,
     RoomMemberEvent,
     RoomMessageText,
 )
@@ -47,7 +48,12 @@ async def main():
 
     instance = Instance(config, nio_client, monzo_client, storage)
 
-    await nio_client.login(config.password, "monzo_bot")
+    login_resp = await nio_client.login(config.password, "monzo_bot")
+
+    if isinstance(login_resp, LoginError):
+        logger.error("Login failed with error: %s" % login_resp.message)
+        await nio_client.close()
+        return
 
     # Set up event callbacks
     callbacks = Callbacks(instance)
