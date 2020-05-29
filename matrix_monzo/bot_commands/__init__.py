@@ -3,9 +3,9 @@ from typing import Dict, List
 
 from nio import RoomMessageText
 
-from messages import messages
-from utils import to_event_content
-from utils.instance import Instance
+from matrix_monzo.messages import messages
+from matrix_monzo.utils import to_event_content
+from matrix_monzo.utils.instance import Instance
 
 COMMANDS = ["verify_device", "say", "show"]
 

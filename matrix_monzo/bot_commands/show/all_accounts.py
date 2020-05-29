@@ -2,7 +2,7 @@ from typing import Dict
 
 from nio import RoomMessageText
 
-from bot_commands.show.accounts import AccountsCommand
+from matrix_monzo.bot_commands.show.accounts import AccountsCommand
 
 
 class AllAccountsCommand(AccountsCommand):

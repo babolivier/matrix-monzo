@@ -1,6 +1,6 @@
 from psycopg3 import Connection
 
-from storage.stores import Store
+from matrix_monzo.storage.stores import Store
 
 
 class AccountsStore(Store):

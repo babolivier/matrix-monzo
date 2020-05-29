@@ -2,8 +2,8 @@ from typing import Any, Dict, List
 
 from nio import RoomMessageText
 
-from bot_commands import SubCommand
-from messages import messages
+from matrix_monzo.bot_commands import SubCommand
+from matrix_monzo.messages import messages
 
 
 class AccountsCommand(SubCommand):

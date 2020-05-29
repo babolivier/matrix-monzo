@@ -1,6 +1,6 @@
 from nio import RoomMessageText
 
-from bot_commands import Command, runner
+from matrix_monzo.bot_commands import Command, runner
 
 
 class SayCommand(Command):

@@ -5,7 +5,7 @@ import sys
 
 import yaml
 
-from errors import ConfigError
+from matrix_monzo.utils.errors import ConfigError
 
 logger = logging.getLogger()
 

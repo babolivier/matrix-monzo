@@ -2,7 +2,7 @@ from typing import Dict
 
 from markdown import markdown
 
-from utils.constants import DEFAULT_MSG_TYPE, MsgFormat
+from matrix_monzo.utils.constants import DEFAULT_MSG_TYPE, MsgFormat
 
 
 def to_event_content(

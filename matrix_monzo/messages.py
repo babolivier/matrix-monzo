@@ -1,7 +1,7 @@
 import json
 from typing import Dict, Optional
 
-from utils import to_event_content
+from matrix_monzo.utils import to_event_content
 
 
 class _Messages:

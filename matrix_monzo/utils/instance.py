@@ -1,8 +1,8 @@
 from monzo import Monzo
 from nio import AsyncClient
 
-from config import Config
-from storage import Storage
+from matrix_monzo.config import Config
+from matrix_monzo.storage import Storage
 
 
 class Instance:

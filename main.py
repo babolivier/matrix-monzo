@@ -12,10 +12,10 @@ from nio import (
     RoomMessageText,
 )
 
-from callbacks import Callbacks
-from config import Config
-from storage import Storage
-from utils.instance import Instance
+from matrix_monzo.callbacks import Callbacks
+from matrix_monzo.config import Config
+from matrix_monzo.storage import Storage
+from matrix_monzo.utils.instance import Instance
 
 logger = logging.getLogger(__name__)
 

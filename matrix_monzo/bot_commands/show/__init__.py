@@ -3,9 +3,9 @@ from typing import Dict
 
 from nio import RoomMessageText
 
-from bot_commands import MetaCommand, SubCommand, runner
-from messages import messages
-from utils.instance import Instance
+from matrix_monzo.bot_commands import MetaCommand, SubCommand, runner
+from matrix_monzo.messages import messages
+from matrix_monzo.utils.instance import Instance
 
 
 class ShowCommand(MetaCommand):

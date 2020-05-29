@@ -2,7 +2,7 @@ import logging
 
 import psycopg2
 
-from storage.stores.accounts import AccountsStore
+from matrix_monzo.storage.stores.accounts import AccountsStore
 
 logger = logging.getLogger(__name__)
 

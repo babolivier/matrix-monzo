@@ -3,9 +3,9 @@ from typing import Dict, List
 
 from nio import RoomMessageText
 
-import bot_commands
-from messages import messages
-from utils.instance import Instance
+from matrix_monzo import bot_commands
+from matrix_monzo.messages import messages
+from matrix_monzo.utils.instance import Instance
 
 
 class Commander:

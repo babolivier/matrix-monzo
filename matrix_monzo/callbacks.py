@@ -4,9 +4,9 @@ import traceback
 
 from nio import InviteMemberEvent, JoinError, MatrixRoom, RoomMemberEvent, RoomMessageText
 
-from commander import Commander
-from messages import messages
-from utils.instance import Instance
+from matrix_monzo.commander import Commander
+from matrix_monzo.messages import messages
+from matrix_monzo.utils.instance import Instance
 
 logger = logging.getLogger(__name__)
 

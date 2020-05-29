@@ -2,8 +2,8 @@ from typing import Dict
 
 from nio import RoomMessageText
 
-from bot_commands import Command, runner
-from messages import messages
+from matrix_monzo.bot_commands import Command, runner
+from matrix_monzo.messages import messages
 
 
 class VerifyDeviceCommand(Command):
