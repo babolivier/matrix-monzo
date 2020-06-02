@@ -11,6 +11,12 @@ logger = logging.getLogger()
 
 
 class Config(object):
+    DEFAULT_CLIENT_ID = "oauth2client_00009vYJnWrxXmMxnpWLSL"
+    DEFAULT_CLIENT_SECRET = (
+        "mnzpub.p8xIoxEn5HSPmeSsgYloROfT9ZZZ2u7VhONAOrJTUsy4Y7Gj"
+        "ZFfuDGvtiE+phlnGkPiELuDTcvTSdd7cMDxh"
+    )
+
     def __init__(self, filepath):
         """
         Args:
@@ -44,6 +50,9 @@ class Config(object):
             handler = logging.StreamHandler(sys.stdout)
             handler.setFormatter(formatter)
             logger.addHandler(handler)
+
+        # Debugging config for oauth requests.
+        # logging.getLogger("requests_oauthlib").setLevel("DEBUG")
 
         # Database setup
         self.database = config.get("database", {})
@@ -82,3 +91,20 @@ class Config(object):
         self.monzo_access_token = monzo.get("access_token")
         if not self.monzo_access_token:
             raise ConfigError("monzo.access_token is a required field")
+
+        self.monzo_client_id = monzo.get("client_id", self.DEFAULT_CLIENT_ID)
+        self.monzo_client_secret = monzo.get("client_secret", self.DEFAULT_CLIENT_SECRET)
+
+        http = config.get("http", {})
+
+        self.http_address = http.get("bind_address")
+        if not self.http_address:
+            raise ConfigError("http.bind_address is a required field")
+
+        self.http_port = http.get("port")
+        if not self.http_port:
+            raise ConfigError("http.port is a required field")
+
+        self.http_baseurl = http.get("public_baseurl")
+        if not self.http_port:
+            raise ConfigError("http.public_baseurl is a required field")

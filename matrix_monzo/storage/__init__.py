@@ -9,8 +9,6 @@ logger = logging.getLogger(__name__)
 
 class Storage:
     def __init__(self, db_config):
-        logger.info("Preparing database")
-
         self.conn = psycopg2.connect(**db_config)
         self.cursor = self.conn.cursor()
 

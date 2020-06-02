@@ -1,7 +1,7 @@
 import importlib
 from typing import Dict
 
-from nio import RoomMessageText
+from nio import MatrixRoom, RoomMessageText
 
 from matrix_monzo.bot_commands import MetaCommand, SubCommand, runner
 from matrix_monzo.messages import messages
@@ -31,12 +31,12 @@ class ShowCommand(MetaCommand):
         return self.help
 
     @runner
-    async def run(self, event: RoomMessageText) -> Dict[str, str]:
+    async def run(self, event: RoomMessageText, room: MatrixRoom) -> Dict[str, str]:
         params = event.body[len(self.PREFIX):].strip()
 
         for name, sub_command in self.sub_commands.items():
             if params.startswith(name):
-                return await sub_command.run_with_params(params, event)
+                return await sub_command.run_with_params(params, event, room)
 
         return messages.get_content("unknown_command")
 

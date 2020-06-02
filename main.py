@@ -3,6 +3,7 @@
 import asyncio
 import logging
 
+import monzo
 from monzo import Monzo
 from nio import (
     AsyncClient,
@@ -15,57 +16,38 @@ from nio import (
 
 from matrix_monzo.callbacks import Callbacks
 from matrix_monzo.config import Config
+from matrix_monzo.http import start_http
 from matrix_monzo.storage import Storage
 from matrix_monzo.utils.instance import Instance
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("matrix_monzo.main")
 
 
 async def main():
     # Read config file
     config = Config("config.yaml")
 
-    # Configuration options for the AsyncClient
-    nio_client_config = AsyncClientConfig(
-        max_limit_exceeded=0,
-        max_timeouts=0,
-        store_sync_tokens=True,
-    )
+    instance = Instance(config)
 
-    # Initialize the matrix client
-    nio_client = AsyncClient(
-        config.homeserver_url,
-        config.user_id,
-        device_id=config.device_id,
-        config=nio_client_config,
-        store_path=config.store_path,
-    )
+    await start_http(instance)
 
-    # Initialise the monzo client
-    monzo_client = Monzo(config.monzo_access_token)
-
-    storage = Storage(config.database)
-
-    instance = Instance(config, nio_client, monzo_client, storage)
-
-    login_resp = await nio_client.login(config.password, "monzo_bot")
+    login_resp = await instance.nio_client.login(config.password, "monzo_bot")
 
     if isinstance(login_resp, LoginError):
         logger.error("Login failed with error: %s" % login_resp.message)
-        await nio_client.close()
+        await instance.nio_client.close()
         return
+
+    logger.info("Authenticated on the homeserver")
 
     # Set up event callbacks
     callbacks = Callbacks(instance)
-    nio_client.add_event_callback(callbacks.message, (RoomMessageText,))
-    nio_client.add_event_callback(callbacks.invite, (InviteMemberEvent,))
-    nio_client.add_event_callback(callbacks.member, (RoomMemberEvent,))
+    instance.nio_client.add_event_callback(callbacks.message, (RoomMessageText,))
+    instance.nio_client.add_event_callback(callbacks.invite, (InviteMemberEvent,))
+    instance.nio_client.add_event_callback(callbacks.member, (RoomMemberEvent,))
 
-    # First do a sync with full_state = true to retrieve the state of the room.
-    await nio_client.sync(full_state=True)
+    logger.info("Registered Matrix handlers")
 
-    logger.info("Registered handlers, now syncing.")
-
-    await nio_client.sync_forever(30000)
+    await instance.run()
 
 asyncio.get_event_loop().run_until_complete(main())

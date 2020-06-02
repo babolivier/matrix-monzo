@@ -1,6 +1,6 @@
 from typing import Dict
 
-from nio import RoomMessageText
+from nio import MatrixRoom, RoomMessageText
 
 from matrix_monzo.bot_commands import Command, runner
 from matrix_monzo.messages import messages
@@ -12,7 +12,7 @@ class VerifyDeviceCommand(Command):
     HELP_DOC = "Add the provided device to the list of verified devices."
 
     @runner
-    async def run(self, event: RoomMessageText) -> Dict[str, str]:
+    async def run(self, event: RoomMessageText, room: MatrixRoom) -> Dict[str, str]:
         params = self.string_to_params(event.body)
 
         device_id = params["device_id"]

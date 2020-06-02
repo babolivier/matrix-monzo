@@ -1,13 +1,15 @@
 import abc
 from typing import Dict, List
 
-from nio import RoomMessageText
+from monzo.errors import ForbiddenError, UnauthorizedError
+from nio import MatrixRoom, RoomMessageText
+from oauthlib.oauth2.rfc6749.errors import MissingTokenError
 
 from matrix_monzo.messages import messages
 from matrix_monzo.utils import to_event_content
 from matrix_monzo.utils.instance import Instance
 
-COMMANDS = ["verify_device", "say", "show"]
+COMMANDS = ["verify_device", "say", "show", "login"]
 
 
 class InvalidParamsException(Exception):
@@ -24,6 +26,10 @@ def runner(f):
             return res
         except InvalidParamsException as e:
             return e.message_content
+        except ForbiddenError:
+            return messages.get("monzo_token_insufficient_permissions")
+        except (UnauthorizedError, MissingTokenError):
+            return messages.get("monzo_missing_token")
 
     return wrapped
 
@@ -48,7 +54,7 @@ class Command(abc.ABC):
         pass
 
     @abc.abstractmethod
-    async def run(self, event: RoomMessageText) -> Dict[str, str]:
+    async def run(self, event: RoomMessageText, room: MatrixRoom) -> Dict[str, str]:
         pass
 
     def string_to_params(self, body: str) -> Dict[str, str]:
@@ -102,7 +108,7 @@ class SubCommand(Command, abc.ABC):
 
     @abc.abstractmethod
     async def run_with_params(
-            self, params: str, event: RoomMessageText,
+            self, params: str, event: RoomMessageText, room: MatrixRoom,
     ) -> Dict[str, str]:
         pass
 

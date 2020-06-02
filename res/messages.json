@@ -11,5 +11,10 @@
   "help_meta_command": "`{prefix}`: {help_doc}\nAvailable sub-commands:\n\n{sub_commands}",
   "accounts": "Available accounts:\n\n{accounts}",
   "account_entry": "* **{description}**, balance: {balance} {currency} (internal ID: {id})",
-  "account_entry_closed": "* <strike>**{description}**, balance: {balance} {currency} (internal ID: {id})</strike>"
+  "account_entry_closed": "* <strike>**{description}**, balance: {balance} {currency} (internal ID: {id})</strike>",
+  "monzo_token_insufficient_permissions": "Please authorise me in your Monzo app and retry this command.",
+  "monzo_missing_token": "You are not authenticated against the Monzo API or your authentication has expired. Please type \"login\" to authenticate.",
+  "login": "To authenticate, please click [here]({login_url}) and follow the instructions.",
+  "login_success": "You've successfully authenticated!",
+  "login_need_app_action": "Please authorise me in your Monzo app to get access to all of my amazing features."
 }

@@ -1,4 +1,4 @@
-from nio import RoomMessageText
+from nio import MatrixRoom, RoomMessageText
 
 from matrix_monzo.bot_commands import Command, runner
 
@@ -9,7 +9,7 @@ class SayCommand(Command):
     HELP_DOC = "Repeat a given expression. Useful to debug command routing."
 
     @runner
-    async def run(self, event: RoomMessageText):
+    async def run(self, event: RoomMessageText, room: MatrixRoom):
         params = self.string_to_params(event.body)
         return params["word"]
 

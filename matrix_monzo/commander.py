@@ -1,7 +1,7 @@
 import importlib
 from typing import Dict, List
 
-from nio import RoomMessageText
+from nio import MatrixRoom, RoomMessageText
 
 from matrix_monzo import bot_commands
 from matrix_monzo.messages import messages
@@ -20,13 +20,13 @@ class Commander:
 
         self._build_help_doc()
 
-    async def dispatch(self, event: RoomMessageText) -> Dict[str, str]:
+    async def dispatch(self, event: RoomMessageText, room: MatrixRoom) -> Dict[str, str]:
         if event.body.startswith("help"):
             return self._dispatch_help(event)
 
         for command in self.commands:
             if event.body.startswith(command.PREFIX):
-                return await command.run(event)
+                return await command.run(event, room)
 
         return messages.get_content("unknown_command")
 

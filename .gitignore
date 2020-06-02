@@ -4,6 +4,7 @@
 # Local database
 *.db
 *.*_devices
+monzo.json
 
 # Config file
 config.yaml

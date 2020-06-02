@@ -36,7 +36,7 @@ class Callbacks:
                 )
                 return
 
-            res = await self.commander.dispatch(event)
+            res = await self.commander.dispatch(event, room)
         except Exception as e:
             logger.exception(e)
             res = messages.get_content("unknown_error")

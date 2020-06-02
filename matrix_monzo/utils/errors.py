@@ -6,3 +6,8 @@ class ConfigError(RuntimeError):
     """
     def __init__(self, msg):
         super(ConfigError, self).__init__("%s" % (msg,))
+
+
+class MonzoInvalidStateError(RuntimeError):
+    def __init__(self):
+        super(MonzoInvalidStateError, self).__init__("Invalid state in the login callback")

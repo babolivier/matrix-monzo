@@ -1,8 +1,8 @@
 from typing import Any, Dict, List
 
-from nio import RoomMessageText
+from nio import MatrixRoom, RoomMessageText
 
-from matrix_monzo.bot_commands import SubCommand
+from matrix_monzo.bot_commands import runner, SubCommand
 from matrix_monzo.messages import messages
 
 
@@ -12,11 +12,12 @@ class AccountsCommand(SubCommand):
     PARAMS = []
     HELP_DOC = "Show a user's open accounts."
 
-    async def run(self, event: RoomMessageText) -> Dict[str, str]:
+    async def run(self, event: RoomMessageText, room: MatrixRoom) -> Dict[str, str]:
         raise NotImplementedError()
 
+    @runner
     async def run_with_params(
-            self, params: str, event: RoomMessageText
+            self, params: str, event: RoomMessageText, room: MatrixRoom,
     ) -> Dict[str, str]:
         return self.get_accounts()
 
