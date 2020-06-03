@@ -19,8 +19,8 @@ class Instance:
 
         self.storage = Storage(self.config.database)
 
-        self.monzo_oauth_client = self.setup_monzo_oauth_client()
-        self.monzo_client = Monzo.from_oauth_session(self.monzo_oauth_client)
+        self._monzo_oauth_client = self.setup_monzo_oauth_client()
+        self.monzo_client = Monzo.from_oauth_session(self._monzo_oauth_client)
 
         self.nio_client = AsyncClient(
             self.config.homeserver_url,
@@ -67,7 +67,7 @@ class Instance:
     def get_monzo_login_url(self, room_id: str) -> str:
         redirect_uri = self.config.http_baseurl + "/auth_callback"
 
-        url, state = self.monzo_oauth_client.authorize_token_url(
+        url, state = self._monzo_oauth_client.authorize_token_url(
             redirect_uri=redirect_uri,
         )
 
@@ -80,6 +80,6 @@ class Instance:
             raise MonzoInvalidStateError()
 
         return (
-            self.monzo_oauth_client.fetch_access_token(code=code),
+            self._monzo_oauth_client.fetch_access_token(code=code),
             self.auths_in_progress[state],
         )
