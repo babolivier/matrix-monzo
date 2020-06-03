@@ -89,10 +89,6 @@ class Config(object):
 
         monzo = config.get("monzo", {})
 
-        self.monzo_access_token = monzo.get("access_token")
-        if not self.monzo_access_token:
-            raise ConfigError("monzo.access_token is a required field")
-
         self.monzo_client_id = monzo.get("client_id", self.DEFAULT_CLIENT_ID)
         self.monzo_client_secret = monzo.get("client_secret", self.DEFAULT_CLIENT_SECRET)
 
