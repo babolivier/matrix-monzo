@@ -51,8 +51,9 @@ class Config(object):
             handler.setFormatter(formatter)
             logger.addHandler(handler)
 
-        # Debugging config for oauth requests.
-        # logging.getLogger("requests_oauthlib").setLevel("DEBUG")
+        # peewee (used by nio's storage layer) is very verbose when logging at the DEBUG
+        # level, so we're forcing it to the INFO level so the debug logs are readable.
+        logging.getLogger("peewee").setLevel("INFO")
 
         # Database setup
         self.database = config.get("database", {})

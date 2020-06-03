@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from monzo import Monzo, MonzoOAuth2Client
 from nio import AsyncClient, AsyncClientConfig
@@ -20,14 +19,7 @@ class Instance:
 
         self.storage = Storage(self.config.database)
 
-        # TODO: only initialise the Monzo client if we've got an access token in the
-        #  database.
-
-        self.monzo_oauth_client = MonzoOAuth2Client(
-            client_id=self.config.monzo_client_id,
-            client_secret=self.config.monzo_client_secret,
-        )
-
+        self.monzo_oauth_client = self.setup_monzo_oauth_client()
         self.monzo_client = Monzo.from_oauth_session(self.monzo_oauth_client)
 
         self.nio_client = AsyncClient(
@@ -43,6 +35,28 @@ class Instance:
         )
 
         self.auths_in_progress = {}
+
+    def setup_monzo_oauth_client(self):
+        def refresh_token_in_store(token):
+            self.storage.token_store.store_token(self.config.owner_id, token)
+
+        existing_token = self.storage.token_store.get_token(self.config.owner_id)
+        if existing_token:
+            return MonzoOAuth2Client(
+                client_id=self.config.monzo_client_id,
+                client_secret=self.config.monzo_client_secret,
+                access_token=existing_token.get("access_token"),
+                refresh_token=existing_token.get("refresh_token"),
+                expires_at=existing_token.get("expires_at"),
+                refresh_callback=refresh_token_in_store,
+            )
+        else:
+            return MonzoOAuth2Client(
+                client_id=self.config.monzo_client_id,
+                client_secret=self.config.monzo_client_secret,
+                refresh_callback=refresh_token_in_store,
+            )
+
 
     async def run(self):
         # First do a sync with full_state = true to retrieve the state of the rooms.

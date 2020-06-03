@@ -1,5 +1,6 @@
-from typing import Any, Callable, Tuple, Optional
+from typing import Callable, Optional
 
+import psycopg2
 from psycopg3 import Connection
 from psycopg3.cursor import Cursor
 
@@ -12,10 +13,18 @@ class Store:
         cursor = self.conn.cursor()
         f(cursor, *args, **kwargs)
         self.conn.commit()
+
+        try:
+            ret = cursor.fetchall()
+        except psycopg2.ProgrammingError:
+            ret = None
+
         cursor.close()
 
-    def execute_in_transaction(self, statement: str, args: Optional[Tuple[Any]] = None):
+        return ret
+
+    def execute_in_transaction(self, statement: str, args: Optional[tuple] = None):
         def execute_statement(cur: Cursor):
             cur.execute(statement, args)
 
-        self.with_transaction(execute_statement)
+        return self.with_transaction(execute_statement)
