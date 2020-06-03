@@ -16,5 +16,7 @@
   "monzo_missing_token": "You are not authenticated against the Monzo API or your authentication has expired. Please type \"login\" to authenticate.",
   "login": "To authenticate, please click [here]({login_url}) and follow the instructions.",
   "login_success": "You've successfully authenticated!",
-  "login_need_app_action": "Please authorise me in your Monzo app to get access to all of my amazing features."
+  "login_need_app_action": "Please authorise me in your Monzo app to get access to all of my amazing features.",
+  "pots": "Available pots:\n\n{pots}",
+  "pot_entry": "* **{name}**, balance: {balance} {currency} (internal ID: {id})"
 }

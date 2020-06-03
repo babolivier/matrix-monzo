@@ -11,7 +11,7 @@ from matrix_monzo.utils.instance import Instance
 class ShowCommand(MetaCommand):
     PREFIX = "show"
     PARAMS = ["entity"]
-    SUB_COMMANDS = ["accounts", "all_accounts"]
+    SUB_COMMANDS = ["accounts", "all_accounts", "pots"]
     HELP_DOC = "Show the desired entity."
 
     def __init__(self, instance: Instance):

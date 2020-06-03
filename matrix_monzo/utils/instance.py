@@ -20,7 +20,7 @@ class Instance:
         self.storage = Storage(self.config.database)
 
         self._monzo_oauth_client = self.setup_monzo_oauth_client()
-        self.monzo_client = Monzo.from_oauth_session(self._monzo_oauth_client)
+        self.monzo_client: Monzo = Monzo.from_oauth_session(self._monzo_oauth_client)
 
         self.nio_client = AsyncClient(
             self.config.homeserver_url,
