@@ -32,7 +32,8 @@ class ShowCommand(MetaCommand):
 
     @runner
     async def run(self, event: RoomMessageText, room: MatrixRoom) -> Dict[str, str]:
-        params = event.body[len(self.PREFIX):].strip()
+        body = self._strip_common_words(event.body)
+        params = body[len(self.PREFIX):].strip()
 
         for name, sub_command in self.sub_commands.items():
             if params.startswith(name):

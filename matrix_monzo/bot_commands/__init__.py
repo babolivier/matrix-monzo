@@ -10,6 +10,7 @@ from matrix_monzo.utils import to_event_content
 from matrix_monzo.utils.instance import Instance
 
 COMMANDS = ["verify_device", "say", "show", "login"]
+COMMON_WORDS = ["of", "my"]
 
 
 class InvalidParamsException(Exception):
@@ -58,6 +59,7 @@ class Command(abc.ABC):
         pass
 
     def string_to_params(self, body: str) -> Dict[str, str]:
+        body = self._strip_common_words(body)
         params_s = body[len(self.PREFIX):]
         params_s.strip()
         params_l = params_s.split()
@@ -80,6 +82,12 @@ class Command(abc.ABC):
             params[self.PARAMS[i]] = params_l[i]
 
         return params
+
+    def _strip_common_words(self, body: str) -> str:
+        for word in COMMON_WORDS:
+            body = body.replace(f" {word}", "")
+
+        return body
 
     def usage(self):
         if not self.PARAMS:
