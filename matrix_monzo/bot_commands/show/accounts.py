@@ -4,6 +4,7 @@ from nio import MatrixRoom, RoomMessageText
 
 from matrix_monzo.bot_commands import runner, SubCommand
 from matrix_monzo.messages import messages
+from matrix_monzo.utils import build_account_description
 
 
 class AccountsCommand(SubCommand):
@@ -41,7 +42,7 @@ class AccountsCommand(SubCommand):
 
             accounts.append(messages.get(
                 message_id=message_id,
-                description=account["description"],
+                description=build_account_description(account),
                 balance=balance,
                 currency=account["currency"],
                 id=account["id"],

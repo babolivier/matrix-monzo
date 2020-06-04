@@ -19,3 +19,13 @@ def to_event_content(
         content["formatted_body"] = markdown(body)
 
     return content
+
+
+def build_account_description(account: dict) -> str:
+    owners_raw = account["owners"]
+
+    owners = []
+    for owner in owners_raw:
+        owners.append(owner["preferred_name"] + "'s")
+
+    return "{owners} current account".format(owners="and".join(owners))
