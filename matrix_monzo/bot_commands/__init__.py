@@ -9,7 +9,7 @@ from matrix_monzo.messages import messages
 from matrix_monzo.utils import to_event_content
 from matrix_monzo.utils.instance import Instance
 
-COMMANDS = ["verify_device", "say", "show", "login"]
+COMMANDS = ["verify_device", "say", "show", "login", "move"]
 COMMON_WORDS = ["of", "my"]
 
 
@@ -58,11 +58,8 @@ class Command(abc.ABC):
     async def run(self, event: RoomMessageText, room: MatrixRoom) -> Dict[str, str]:
         pass
 
-    def string_to_params(self, body: str) -> Dict[str, str]:
-        body = self._strip_common_words(body)
-        params_s = body[len(self.PREFIX):]
-        params_s.strip()
-        params_l = params_s.split()
+    def _body_to_params_dict(self, body: str) -> Dict[str, str]:
+        params_l = self._body_to_list(body)
 
         if len(params_l) != len(self.PARAMS):
             expected_params = " ".join([f'[{param}]' for param in self.PARAMS])
@@ -83,9 +80,17 @@ class Command(abc.ABC):
 
         return params
 
+    def _body_to_list(self, body: str) -> list:
+        body = body.casefold()
+        params = body[len(self.PREFIX):]
+        params.strip()
+        return params.split()
+
     def _strip_common_words(self, body: str) -> str:
         for word in COMMON_WORDS:
             body = body.replace(f" {word}", "")
+            if body.startswith(word):
+                body = body.replace(f"{word} ", "")
 
         return body
 

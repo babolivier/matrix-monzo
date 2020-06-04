@@ -10,7 +10,7 @@ class SayCommand(Command):
 
     @runner
     async def run(self, event: RoomMessageText, room: MatrixRoom):
-        params = self.string_to_params(event.body)
+        params = self._body_to_params_dict(event.body)
         return params["word"]
 
 

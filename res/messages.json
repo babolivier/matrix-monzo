@@ -18,5 +18,17 @@
   "login_success": "You've successfully authenticated!",
   "login_need_app_action": "Please authorise me in your Monzo app to get access to all of my amazing features.",
   "pots": "Available pots:\n\n{pots}",
-  "pot_entry": "* **{name}**, balance: {balance} {currency} (internal ID: {id})"
+  "pot_entry": "* **{name}**, balance: {balance} {currency} (internal ID: {id})",
+  "move_to_from_missing_error": "\"{param_found}\" was found in the command to indicate the {direction_found} of the transfer, but no \"{param_not_found}\" was found to indicate its {direction_not_found}.",
+  "move_no_amount_error": "Please specify the amount to move before the source and destination.",
+  "move_to_from_start_error": "Please phrase your command so that the amount and currency are located before the source and the destination of the transfer.",
+  "move_unsupported_currency_error": "You have specified an unsupported currency or currency symbol. Supported currency and symbols are: {currencies_and_symbols}.",
+  "move_wrong_match_number_error": "I need two pots and/or accounts (one source and one destination), but I found {nb_match} matching pots and/or accounts in your command (their internal IDs are: {match_ids}).\n\nDid you know you could prepend the source of the transfer with \"from\" and its destination with \"to\" to make them easier for me to find?",
+  "move_wrong_number_for_direction_error": "I need one pot or account as the transfer's {direction}, but I found {nb_match} matching pots and/or accounts in your command (their internal IDs are: {match_ids}).\n\nTo make this less ambiguous for me, could you please replace the pot or account name with its internal ID? You can find it by typing \"show pots\" if you want me to use a pot here, or \"show accounts\" if you want me to use a current account.",
+  "move_wrong_destination_number": "I need one pot or account as the transfer's destination, but I found {nb_match} matching pots and/or accounts in your command (their internal IDs are: {match_ids}).\n\nTo make this less ambiguous for me, could you please replace the pot or account name with its internal ID? You can find it by typing \"show pots\" if you want me to use a pot here, or \"show accounts\" if you want me to use a current account.",
+  "move_basic_parse_error": "Sorry, I couldn't understand this command.\n\nDid you know you could prepend the source of the transfer with \"from\" and its destination with \"to\" to make them easier for me to find?",
+  "move_pot_named_account_error": "You wrote something like \"current account\", \"my account\", etc. as either the source or the destination or the transfer, but you also have a pot named {pot_name}, which is too similar.\n\nI'm having troubles figuring out which one I should use! To make this less ambiguous for me, could you please replace the pot or account name with its internal ID? You can find it by typing \"show pots\" if you want me to use a pot here, or \"show accounts\" if you want me to use a current account.",
+  "move_same_account_pot_error": "You can't transfer from a pot or account into itself.",
+  "command_parse_error": "I couldn't understand this command. Please type \"help\" to get help on all of the commands I can understand.",
+  "debug_parse_success": "Yay! I did understand this command!!! The params you gave me were parsed as: {params}"
 }
