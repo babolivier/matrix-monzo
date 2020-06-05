@@ -62,7 +62,12 @@ class Instance:
         # First do a sync with full_state = true to retrieve the state of the rooms.
         await self.nio_client.sync(full_state=True)
         logger.info("Initialisation complete, now syncing")
-        await self.nio_client.sync_forever(30000)
+
+        while True:
+            try:
+                await self.nio_client.sync_forever(30000)
+            except Exception:
+                logger.info("Connectivity to the homeserver has been lost, retrying...")
 
     def get_monzo_login_url(self, room_id: str) -> str:
         redirect_uri = self.config.http_baseurl + "/auth_callback"
