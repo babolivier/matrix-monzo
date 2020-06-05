@@ -30,6 +30,8 @@
   "move_basic_parse_error": "Sorry, I couldn't understand this command.\n\nDid you know you could prepend the source of the transfer with \"from\" and its destination with \"to\" to make them easier for me to find?",
   "move_pot_named_account_error": "You wrote something like \"current account\", \"my account\", etc. as either the source or the destination or the transfer, but you also have a pot named {pot_name}, which is too similar.\n\nI'm having troubles figuring out which one I should use! To make this less ambiguous for me, could you please replace the pot or account name with its internal ID? You can find it by typing \"show pots\" if you want me to use a pot here, or \"show accounts\" if you want me to use a current account.",
   "move_same_account_pot_error": "You can't transfer from a pot or account into itself.",
+  "move_success": "I have successfully moved {amount} {currency} from {source} to {destination}!",
   "command_parse_error": "I couldn't understand this command. Please type \"help\" to get help on all of the commands I can understand.",
-  "debug_parse_success": "Yay! I did understand this command!!! The params you gave me were parsed as: {params}"
+  "debug_parse_success": "Yay! I did understand this command!!! The params you gave me were parsed as: {params}",
+  "monzo_api_error": "Monzo won't let me do this, it told me: {error}."
 }

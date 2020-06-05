@@ -1,23 +1,38 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Tuple, Union
 
 from nio import MatrixRoom, RoomMessageText
 
 from matrix_monzo.bot_commands import Command, runner
 from matrix_monzo.messages import messages
-from matrix_monzo.utils.errors import InvalidParamsException
+from matrix_monzo.utils import build_account_description
+from matrix_monzo.utils.errors import InvalidParamsException, ProcessingError
 
-SUPPORTED_CURRENCIES = ["£", "GBP", "$", "USD"]
+# TODO: we currently only support GBP, however Monzo is curently opening branches in the
+#  US so supporting USD as well would be nice.
+SUPPORTED_CURRENCIES = ["£", "GBP"]
+
+
+class DirectionTypes:
+    ACCOUNT = "account"
+    POT = "pot"
 
 
 class MoveCommand(Command):
     PREFIX = "move"
     PARAMS = ["amount", "source", "destination"]
-    HELP_DOC = "Move money between pots or accounts. Prepend the source with a \"from\" and the destination with a \"to\" for more accuracy."
+    HELP_DOC = "Move money between pots and accounts. Prepend the source with a \"from\" and the destination with a \"to\" for more accuracy. Doing a transfer outside of your Monzo account isn't currently supported."
 
     @runner
     async def run(self, event: RoomMessageText, room: MatrixRoom):
         pots = self._get_pots()
-        accounts = self._get_accounts()
+        accounts, raw_account_res = self._get_accounts()
+
+        # We need at least one account to move the amount, even if the transfer is
+        # between two pots as the Monzo API doesn't support direct transfers between
+        # pots.
+        if len(accounts) == 0:
+            raise ProcessingError(messages.get_content("account_no_accounts_error"))
+
         params = self._get_params(event.body, pots, accounts)
 
         # We don't want to deal with transfers where the destination and the source are
@@ -27,7 +42,103 @@ class MoveCommand(Command):
                 messages.get_content("move_same_account_pot_error")
             )
 
-        return messages.get_content("debug_parse_success", params=params)
+        self._do_transfer(params, pots, accounts)
+
+        if "account" in accounts:
+            del accounts["account"]
+
+        source_name = self._build_direction_description(
+            params["source"], pots, raw_account_res,
+        )
+        destination_name = self._build_direction_description(
+            params["destination"], pots, raw_account_res,
+        )
+
+        return messages.get_content(
+            message_id="move_success",
+            amount=params["amount"],
+            currency="GBP",  # We currently only support GBP.
+            source=source_name,
+            destination=destination_name,
+        )
+
+    def _build_direction_description(
+        self, direction: dict, pots: dict, raw_account_res: dict,
+    ):
+        raw_accounts = raw_account_res["accounts"]
+        raw_accounts = list(filter(lambda a: not a["closed"], raw_accounts))
+
+        if direction["type"] == DirectionTypes.POT:
+            for pot_name, pot_id in pots.items():
+                if pot_id == direction["id"]:
+                    return pot_name
+
+            return direction["id"]
+
+        if len(raw_accounts) == 1:
+            return "your account"
+
+        for account in raw_accounts:
+            if account["id"] == direction["id"]:
+                return build_account_description(account)
+
+        return direction["id"]
+
+    def _do_transfer(self, params: dict, pots, accounts):
+        amount_in_pennies = int(params["amount"] * 100)
+
+        if (
+            params["source"]["type"] == DirectionTypes.POT
+            and params["destination"]["type"] == DirectionTypes.ACCOUNT
+        ):
+            self.instance.monzo_client.withdraw_from_pot(
+                account_id=params["destination"]["id"],
+                pot_id=params["source"]["id"],
+                amount_in_pennies=amount_in_pennies,
+            )
+        elif (
+            params["source"]["type"] == DirectionTypes.ACCOUNT
+            and params["destination"]["type"] == DirectionTypes.POT
+        ):
+            self.instance.monzo_client.deposit_into_pot(
+                pot_id=params["destination"]["id"],
+                account_id=params["source"]["id"],
+                amount_in_pennies=amount_in_pennies,
+            )
+        elif(
+            params["source"]["type"] == DirectionTypes.POT
+            and params["destination"]["type"] == DirectionTypes.POT
+        ):
+            account_id = accounts[list(accounts.keys())[0]]
+
+            self.instance.monzo_client.withdraw_from_pot(
+                account_id=account_id,
+                pot_id=params["source"]["id"],
+                amount_in_pennies=amount_in_pennies,
+            )
+
+            self.instance.monzo_client.deposit_into_pot(
+                pot_id=params["destination"]["id"],
+                account_id=account_id,
+                amount_in_pennies=amount_in_pennies,
+            )
+        elif(
+            params["source"]["type"] == DirectionTypes.ACCOUNT
+            and params["destination"]["type"] == DirectionTypes.ACCOUNT
+        ):
+            pot_id = pots[list(pots.keys())[0]]
+
+            self.instance.monzo_client.deposit_into_pot(
+                pot_id=pot_id,
+                account_id=params["destination"]["id"],
+                amount_in_pennies=amount_in_pennies,
+            )
+
+            self.instance.monzo_client.withdraw_from_pot(
+                account_id=params["source"]["id"],
+                pot_id=pot_id,
+                amount_in_pennies=amount_in_pennies,
+            )
 
     def _get_params(self, body: str, pots: dict, accounts: dict) -> dict:
         # This is a long command that doesn't use commas in its grammar, so just to
@@ -75,7 +186,7 @@ class MoveCommand(Command):
                 matches.append(
                     {
                         "id": pot_id,
-                        "type": "pot",
+                        "type": DirectionTypes.POT,
                         "index": index,
                     }
                 )
@@ -170,7 +281,7 @@ class MoveCommand(Command):
             if s in pots.keys():
                 params[param_key] = {
                     "id": pots[s],
-                    "type": "pot",
+                    "type": DirectionTypes.POT,
                 }
 
                 return
@@ -185,7 +296,7 @@ class MoveCommand(Command):
                 elif pot_id.casefold() in s:
                     params[param_key] = {
                         "id": pot_id,
-                        "type": "pot",
+                        "type": DirectionTypes.POT,
                     }
 
                     return
@@ -208,7 +319,7 @@ class MoveCommand(Command):
             if len(match_ids):
                 params[param_key] = {
                     "id": match_ids[0],
-                    "type": "pot",
+                    "type": DirectionTypes.POT,
                 }
 
         # Try to match the source and the destination against pot names and IDs.
@@ -241,7 +352,7 @@ class MoveCommand(Command):
             if len(account_matches):
                 params[param_key] = {
                     "id": account_matches[0]["id"],
-                    "type": "account",
+                    "type": DirectionTypes.ACCOUNT,
                 }
 
         # Try to match the source and the destination against account names and IDs.
@@ -313,7 +424,7 @@ class MoveCommand(Command):
                     matches.append(
                         {
                             "id": account_id,
-                            "type": "account",
+                            "type": DirectionTypes.ACCOUNT,
                             "index": index
                         }
                     )
@@ -336,7 +447,7 @@ class MoveCommand(Command):
 
         return pots
 
-    def _get_accounts(self) -> dict:
+    def _get_accounts(self) -> Tuple[dict, dict]:
         # Retrieve the list of accounts for this user against the Monzo API.
         res = self.instance.monzo_client.get_accounts()
 
@@ -357,7 +468,7 @@ class MoveCommand(Command):
             key = ",".join(owners_names)
             accounts[key.casefold()] = account["id"]
 
-        return accounts
+        return accounts, res
 
     def _can_parse_into_float(self, s: str) -> bool:
         try:
