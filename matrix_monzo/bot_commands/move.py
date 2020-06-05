@@ -249,11 +249,11 @@ class MoveCommand(Command):
 
         # Figure out the source and destination depending on which match
         if matches[0]["index"] > matches[1]["index"]:
-            params["source"] = matches[0]
-            params["destination"] = matches[1]
-        else:
             params["source"] = matches[1]
             params["destination"] = matches[0]
+        else:
+            params["source"] = matches[0]
+            params["destination"] = matches[1]
 
         return params
 
