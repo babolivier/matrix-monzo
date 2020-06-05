@@ -24,11 +24,11 @@ def runner(f):
         except (InvalidParamsException, ProcessingError) as e:
             return e.message_content
         except ForbiddenError:
-            return messages.get("monzo_token_insufficient_permissions")
+            return messages.get_content("monzo_token_insufficient_permissions")
         except BadRequestError as e:
             return messages.get_content("monzo_api_error", error=e)
         except (UnauthorizedError, MissingTokenError):
-            return messages.get("monzo_missing_token")
+            return messages.get_content("monzo_missing_token")
 
     return wrapped
 
