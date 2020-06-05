@@ -5,9 +5,10 @@ from nio import MatrixRoom, RoomMessageText
 from matrix_monzo.bot_commands import Command, runner
 from matrix_monzo.messages import messages
 from matrix_monzo.utils import build_account_description
+from matrix_monzo.utils.constants import LETTERS
 from matrix_monzo.utils.errors import InvalidParamsException, ProcessingError
 
-# TODO: we currently only support GBP, however Monzo is curently opening branches in the
+# TODO: we currently only support GBP, however Monzo is currently opening branches in the
 #  US so supporting USD as well would be nice.
 SUPPORTED_CURRENCIES = ["£", "GBP"]
 
@@ -213,7 +214,13 @@ class MoveCommand(Command):
             index = None
 
             if name.casefold() in params_s:
+                # Don't match the name of the pot if it's part of a word.
                 index = params_s.index(name.casefold())
+                if(
+                    params_s[index - 1] in LETTERS
+                    or params_s[index + len(name) + 1] in LETTERS
+                ) :
+                    index = None
             elif pot_id in params_s:
                 index = params_s.index(pot_id)
 
@@ -327,7 +334,10 @@ class MoveCommand(Command):
             match_ids = []
             for name, pot_id in pots.items():
                 if name in s:
-                    match_ids.append(pot_id)
+                    # Don't match the name of the pot if it's part of a word.
+                    index = s.index(name)
+                    if not s[index-1] in LETTERS and not s[index+len(name)+1] in LETTERS:
+                        match_ids.append(pot_id)
                 elif pot_id.casefold() in s:
                     params[param_key] = {
                         "id": pot_id,

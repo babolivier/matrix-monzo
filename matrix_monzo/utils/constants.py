@@ -8,3 +8,6 @@ class MsgFormat:
 
 
 DEFAULT_MSG_TYPE = MsgType.TEXT
+
+
+LETTERS = "abcdefghijklmnopqrstuvwxyz-"
