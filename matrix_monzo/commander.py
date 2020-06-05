@@ -66,11 +66,12 @@ class Commander:
     def _build_help_list(self, commands: List[bot_commands.Command]) -> List[str]:
         commands_help_list = []
         for command in commands:
-            commands_help_list.append(messages.get(
-                message_id="help_entry",
-                prefix=command.PREFIX,
-                help_doc=command.HELP_DOC.strip("."),
-                usage=command.usage(),
-            ))
+            if command.HELP_DOC:
+                commands_help_list.append(messages.get(
+                    message_id="help_entry",
+                    prefix=command.PREFIX,
+                    help_doc=command.HELP_DOC.strip("."),
+                    usage=command.usage(),
+                ))
 
         return commands_help_list

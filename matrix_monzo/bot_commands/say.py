@@ -6,7 +6,7 @@ from matrix_monzo.bot_commands import Command, runner
 class SayCommand(Command):
     PREFIX = "say"
     PARAMS = ["word"]
-    HELP_DOC = "Repeat a given expression. Useful to debug command routing."
+    HELP_DOC = ""
 
     @runner
     async def run(self, event: RoomMessageText, room: MatrixRoom):
