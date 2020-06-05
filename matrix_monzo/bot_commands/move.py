@@ -372,7 +372,7 @@ class MoveCommand(Command):
                 or len(account_matches) > 1
             ):
                 match_ids = [match["id"] for match in account_matches]
-                match_ids += params[param_key]["id"]
+                match_ids += [params[param_key]["id"]]
                 raise InvalidParamsException(
                     messages.get_content(
                         message_id="move_wrong_number_for_direction_error",
