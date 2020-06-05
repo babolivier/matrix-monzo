@@ -59,9 +59,11 @@ class MoveCommand(Command):
             params["destination"], pots, raw_account_res,
         )
 
+        formatted_amount = "%.2f" % params["amount"]
+
         return messages.get_content(
             message_id="move_success",
-            amount=params["amount"],
+            amount=formatted_amount,
             currency="GBP",  # We currently only support GBP.
             source=source_name,
             destination=destination_name,

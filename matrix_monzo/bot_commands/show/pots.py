@@ -27,11 +27,13 @@ class PotsCommand(SubCommand):
             if pot["deleted"]:
                 continue
 
+            balance_formatted = "%.2f" % (pot["balance"] / 100)
+
             pots.append(
                 messages.get(
                     message_id="pot_entry",
                     name=pot["name"],
-                    balance=pot["balance"] / 100,
+                    balance=balance_formatted,
                     currency=pot["currency"],
                     id=pot["id"],
                 )

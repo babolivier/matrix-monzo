@@ -35,7 +35,7 @@ class AccountsCommand(SubCommand):
                 continue
 
             balance_res = self.instance.monzo_client.get_balance(account["id"])
-            balance = balance_res["balance"] / 100
+            balance_formatted = "%.2f" % (balance_res["balance"] / 100)
 
             message_id = "account_entry"
             if account["closed"]:
@@ -47,7 +47,7 @@ class AccountsCommand(SubCommand):
             accounts.append(messages.get(
                 message_id=message_id,
                 description=build_account_description(account),
-                balance=balance,
+                balance=balance_formatted,
                 currency=account["currency"],
                 id=account["id"],
             ))
