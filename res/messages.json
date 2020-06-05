@@ -1,5 +1,7 @@
 {
-  "welcome_message": "Hello! I'm your friendly ![](mxc://abolivier.bzh/obagTSgbuwrkAsfzMapExdrk)Monzo bot, here to help you manage your account straight from Matrix!\n\nStart by typing \"help\" to know what I can do \uD83D\uDE42",
+  "welcome_message_p1": "Hello! I'm your friendly ![](mxc://abolivier.bzh/obagTSgbuwrkAsfzMapExdrk)Monzo bot, here to help you manage your account straight from Matrix!",
+  "welcome_message_p2": "Start by typing \"help\" to know what I can do \uD83D\uDE42",
+  "welcome_message_p3": "Hint: if you haven't already done so, you'll need to log in before being able to interact with your account. Type \"login\" and follow the steps to log into your Monzo account.",
   "unverified_device": "This message has been sent from an unverified device ({device_id}). To verify it, type \"verify device {device_id}\" from a verified device.",
   "unknown_command": "Unknown command. Type \"help\" to see available commands.",
   "invalid_params": "Invalid number of parameters: expected {expected_params_number}, got {actual_params_number}. Usage: {usage}.",

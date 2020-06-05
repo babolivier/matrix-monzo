@@ -14,6 +14,11 @@ class Callbacks:
         self.instance = instance
         self.commander = Commander(instance)
 
+        # Workaround to https://github.com/matrix-org/synapse/issues/3769
+        # Stores the IDs of the rooms we've sent the welcome message to, to prevent them
+        # being sent twice.
+        self.welcomed = []
+
     async def message(self, room: MatrixRoom, event: RoomMessageText) -> None:
         if event.sender != self.instance.config.owner_id:
             return
@@ -81,12 +86,31 @@ class Callbacks:
                 break
 
     async def member(self, room: MatrixRoom, event: RoomMemberEvent):
-        # Currently broken due to https://github.com/matrix-org/synapse/issues/3769
         if event.membership != "join" or event.state_key != self.instance.config.user_id:
             return
+
+        if room.room_id in self.welcomed:
+            return
+
+        self.welcomed.append(room.room_id)
 
         await self.instance.nio_client.room_send(
             room.room_id,
             "m.room.message",
-            messages.get_content("welcome_message", format_markdown=True),
+            messages.get_content("welcome_message_p1", format_markdown=True),
+            ignore_unverified_devices=True,
+        )
+
+        await self.instance.nio_client.room_send(
+            room.room_id,
+            "m.room.message",
+            messages.get_content("welcome_message_p2"),
+            ignore_unverified_devices=True,
+        )
+
+        await self.instance.nio_client.room_send(
+            room.room_id,
+            "m.room.message",
+            messages.get_content("welcome_message_p3"),
+            ignore_unverified_devices=True,
         )
