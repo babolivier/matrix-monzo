@@ -18,6 +18,11 @@ class InvalidParamsException(Exception):
         self.message_content = message_content
 
 
+class ProcessingError(Exception):
+    def __init__(self, message_content: Dict[str, str]):
+        self.message_content = message_content
+
+
 def runner(f):
     async def wrapped(*args, **kwargs):
         try:
