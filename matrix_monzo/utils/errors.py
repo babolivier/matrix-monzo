@@ -1,3 +1,6 @@
+from typing import Dict
+
+
 class ConfigError(RuntimeError):
     """An error encountered during reading the config file
 
@@ -11,3 +14,21 @@ class ConfigError(RuntimeError):
 class MonzoInvalidStateError(RuntimeError):
     def __init__(self):
         super(MonzoInvalidStateError, self).__init__("Invalid state in the login callback")
+
+
+class ClientError(Exception):
+    """An error that contains data to send to the user's client.
+
+    Args:
+        message_content: The content of the m.room.message event to send the user.
+    """
+    def __init__(self, message_content: Dict[str, str]):
+        self.message_content = message_content
+
+
+class InvalidParamsException(ClientError):
+    pass
+
+
+class ProcessingError(ClientError):
+    pass

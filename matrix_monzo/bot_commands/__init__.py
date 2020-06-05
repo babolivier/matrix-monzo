@@ -7,20 +7,11 @@ from oauthlib.oauth2.rfc6749.errors import MissingTokenError
 
 from matrix_monzo.messages import messages
 from matrix_monzo.utils import to_event_content
+from matrix_monzo.utils.errors import InvalidParamsException, ProcessingError
 from matrix_monzo.utils.instance import Instance
 
 COMMANDS = ["verify_device", "say", "show", "login", "move"]
 COMMON_WORDS = ["of", "my"]
-
-
-class InvalidParamsException(Exception):
-    def __init__(self, message_content: Dict[str, str]):
-        self.message_content = message_content
-
-
-class ProcessingError(Exception):
-    def __init__(self, message_content: Dict[str, str]):
-        self.message_content = message_content
 
 
 def runner(f):
@@ -30,7 +21,7 @@ def runner(f):
             if not isinstance(res, dict):
                 return to_event_content(res)
             return res
-        except InvalidParamsException as e:
+        except (InvalidParamsException, ProcessingError) as e:
             return e.message_content
         except ForbiddenError:
             return messages.get("monzo_token_insufficient_permissions")

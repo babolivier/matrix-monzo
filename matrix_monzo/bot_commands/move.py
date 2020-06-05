@@ -2,8 +2,9 @@ from typing import Dict, List, Union
 
 from nio import MatrixRoom, RoomMessageText
 
-from matrix_monzo.bot_commands import Command, InvalidParamsException, runner
+from matrix_monzo.bot_commands import Command, runner
 from matrix_monzo.messages import messages
+from matrix_monzo.utils.errors import InvalidParamsException
 
 SUPPORTED_CURRENCIES = ["£", "GBP", "$", "USD"]
 
