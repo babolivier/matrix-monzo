@@ -10,7 +10,7 @@ from matrix_monzo.utils import to_event_content
 from matrix_monzo.utils.errors import InvalidParamsException, ProcessingError
 from matrix_monzo.utils.instance import Instance
 
-COMMANDS = ["verify_device", "say", "show", "login", "move"]
+COMMANDS = ["verify_device", "say", "show", "login", "move", "transfer"]
 COMMON_WORDS = ["of", "my"]
 
 
