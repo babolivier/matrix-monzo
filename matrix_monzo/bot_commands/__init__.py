@@ -56,8 +56,8 @@ class Command(abc.ABC):
     async def run(self, event: RoomMessageText, room: MatrixRoom) -> Dict[str, str]:
         pass
 
-    def _body_to_params_dict(self, body: str) -> Dict[str, str]:
-        params_l = self._body_to_list(body)
+    def _body_to_params_dict(self, body: str, case_sensitive=False) -> Dict[str, str]:
+        params_l = self._body_to_list(body, case_sensitive)
 
         if len(params_l) != len(self.PARAMS):
             expected_params = " ".join([f'[{param}]' for param in self.PARAMS])
@@ -78,8 +78,10 @@ class Command(abc.ABC):
 
         return params
 
-    def _body_to_list(self, body: str) -> list:
-        body = body.casefold()
+    def _body_to_list(self, body: str, case_sensitive=False) -> list:
+        if not case_sensitive:
+            body = body.casefold()
+
         params = body[len(self.PREFIX):]
         params.strip()
         return params.split()

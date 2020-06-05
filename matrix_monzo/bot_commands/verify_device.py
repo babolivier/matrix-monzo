@@ -13,7 +13,7 @@ class VerifyDeviceCommand(Command):
 
     @runner
     async def run(self, event: RoomMessageText, room: MatrixRoom) -> Dict[str, str]:
-        params = self._body_to_params_dict(event.body)
+        params = self._body_to_params_dict(event.body, case_sensitive=True)
 
         device_id = params["device_id"]
 
