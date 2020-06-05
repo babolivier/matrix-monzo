@@ -24,7 +24,11 @@ class MoveCommand(Command):
 
     @runner
     async def run(self, event: RoomMessageText, room: MatrixRoom):
+        # Get the pots and accounts for this user from the API.
         pots = self._get_pots()
+        # We also get the raw response from the accounts retrieval query so that we can
+        # compute a nice name for the account when telling the user the command
+        # succeeded.
         accounts, raw_account_res = self._get_accounts()
 
         # We need at least one account to move the amount, even if the transfer is
@@ -33,6 +37,8 @@ class MoveCommand(Command):
         if len(accounts) == 0:
             raise ProcessingError(messages.get_content("account_no_accounts_error"))
 
+        # Parse the event body to extract the amount to transfer, as well as the IDs of
+        # the pots and/or accounts to transfer from and to.
         params = self._get_params(event.body, pots, accounts)
 
         # We don't want to deal with transfers where the destination and the source are
@@ -42,11 +48,10 @@ class MoveCommand(Command):
                 messages.get_content("move_same_account_pot_error")
             )
 
+        # Actually do the transfer.
         self._do_transfer(params, pots, accounts)
 
-        if "account" in accounts:
-            del accounts["account"]
-
+        # Build a user-friendly description for the source and the destination.
         source_name = self._build_direction_description(
             params["source"], pots, raw_account_res,
         )
@@ -65,32 +70,46 @@ class MoveCommand(Command):
     def _build_direction_description(
         self, direction: dict, pots: dict, raw_account_res: dict,
     ):
+        # Extract the accounts from the raw response, and filter out closed accounts
+        # because they're excluded from transfers..
         raw_accounts = raw_account_res["accounts"]
         raw_accounts = list(filter(lambda a: not a["closed"], raw_accounts))
 
+        # If the direction is a pot, find the pot with this ID.
         if direction["type"] == DirectionTypes.POT:
             for pot_name, pot_id in pots.items():
                 if pot_id == direction["id"]:
                     return pot_name
 
+            # If we couldn't find it (which shouldn't happen, but let's be safe), then
+            # just use the ID.
             return direction["id"]
 
+        # If the direction isn't a pot, then it's an account. If we only know about one
+        # account, then we can just go with "your current account".
         if len(raw_accounts) == 1:
-            return "your account"
+            return "your current account"
 
+        # If there's more than 2 accounts for this user, then fetch the account with this
+        # ID and build a nice description
         for account in raw_accounts:
             if account["id"] == direction["id"]:
                 return build_account_description(account)
 
+        # If we couldn't find it (which shouldn't happen, but let's be safe), then
+        # just use the ID.
         return direction["id"]
 
     def _do_transfer(self, params: dict, pots, accounts):
+        # Convert the amount into pennies/cents, as that's what the Monzo API expects.
         amount_in_pennies = int(params["amount"] * 100)
 
         if (
             params["source"]["type"] == DirectionTypes.POT
             and params["destination"]["type"] == DirectionTypes.ACCOUNT
         ):
+            # If the transfer is from a pot to an account, withdraw from the pot to the
+            # account.
             self.instance.monzo_client.withdraw_from_pot(
                 account_id=params["destination"]["id"],
                 pot_id=params["source"]["id"],
@@ -100,6 +119,8 @@ class MoveCommand(Command):
             params["source"]["type"] == DirectionTypes.ACCOUNT
             and params["destination"]["type"] == DirectionTypes.POT
         ):
+            # If the transfer is from an account to a pot, deposit from the account to
+            # the pot.
             self.instance.monzo_client.deposit_into_pot(
                 pot_id=params["destination"]["id"],
                 account_id=params["source"]["id"],
@@ -109,6 +130,11 @@ class MoveCommand(Command):
             params["source"]["type"] == DirectionTypes.POT
             and params["destination"]["type"] == DirectionTypes.POT
         ):
+            # If the transfer is from a pot to another pot, get an account we can use
+            # to pass the money through, then withdraw from the first pot to the
+            # account, and finally deposit to the second pot from the account.
+            # We use this kind of convoluted way of doing things because Monzo doesn't
+            # allow direct pot to pot transfers.
             account_id = accounts[list(accounts.keys())[0]]
 
             self.instance.monzo_client.withdraw_from_pot(
@@ -126,6 +152,11 @@ class MoveCommand(Command):
             params["source"]["type"] == DirectionTypes.ACCOUNT
             and params["destination"]["type"] == DirectionTypes.ACCOUNT
         ):
+            # If the transfer is from an account to another account, get a pot we can
+            # use to pass the money through, then deposit from the first account to the
+            # pot, and finally withdraw from the pot to the first account. 
+            # We use this kind of convoluted way of doing things because Monzo doesn't
+            # allow direct account to account transfers.
             pot_id = pots[list(pots.keys())[0]]
 
             self.instance.monzo_client.deposit_into_pot(
