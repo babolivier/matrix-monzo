@@ -1,6 +1,7 @@
 from typing import Dict
 
 from markdown import markdown
+
 from matrix_monzo.utils.constants import DEFAULT_MSG_TYPE, MsgFormat
 
 

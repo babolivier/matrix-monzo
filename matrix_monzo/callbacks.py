@@ -1,6 +1,4 @@
-import asyncio
 import logging
-import traceback
 
 from nio import InviteMemberEvent, JoinError, MatrixRoom, RoomMemberEvent, RoomMessageText
 

@@ -3,11 +3,7 @@
 import asyncio
 import logging
 
-import monzo
-from monzo import Monzo
 from nio import (
-    AsyncClient,
-    AsyncClientConfig,
     InviteMemberEvent,
     LoginError,
     RoomMemberEvent,
@@ -17,7 +13,6 @@ from nio import (
 from matrix_monzo.callbacks import Callbacks
 from matrix_monzo.config import Config
 from matrix_monzo.http import start_http
-from matrix_monzo.storage import Storage
 from matrix_monzo.utils.instance import Instance
 
 logger = logging.getLogger("matrix_monzo.main")
