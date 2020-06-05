@@ -1,7 +1,7 @@
 import abc
 from typing import Dict, List
 
-from monzo.errors import ForbiddenError, UnauthorizedError
+from monzo.errors import BadRequestError, ForbiddenError, UnauthorizedError
 from nio import MatrixRoom, RoomMessageText
 from oauthlib.oauth2.rfc6749.errors import MissingTokenError
 
@@ -25,6 +25,8 @@ def runner(f):
             return e.message_content
         except ForbiddenError:
             return messages.get("monzo_token_insufficient_permissions")
+        except BadRequestError as e:
+            return messages.get_content("monzo_api_error", error=e)
         except (UnauthorizedError, MissingTokenError):
             return messages.get("monzo_missing_token")
 
