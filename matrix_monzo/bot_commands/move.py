@@ -79,7 +79,9 @@ class MoveCommand(Command):
         if direction["type"] == DirectionTypes.POT:
             for pot_name, pot_id in pots.items():
                 if pot_id == direction["id"]:
-                    return pot_name
+                    # We've removed the case in the pot's name when loading it, so
+                    # surround it with quotes to improve readability.
+                    return '"'+pot_name+'"'
 
             # If we couldn't find it (which shouldn't happen, but let's be safe), then
             # just use the ID.
