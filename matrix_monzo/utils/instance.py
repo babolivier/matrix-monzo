@@ -59,7 +59,6 @@ class Instance:
                 refresh_callback=refresh_token_in_store,
             )
 
-
     async def run(self):
         # First do a sync with full_state = true to retrieve the state of the rooms.
         await self.nio_client.sync(full_state=True)
@@ -93,7 +92,7 @@ class Instance:
 
     def is_logged_in(self) -> bool:
         existing_token = self.storage.token_store.get_token(self.config.owner_id)
-        if existing_token is None:
+        if not existing_token:
             return False
 
         try:
@@ -101,3 +100,6 @@ class Instance:
             return True
         except (UnauthorizedError, MissingTokenError):
             return False
+
+    def invalidate_monzo_token(self):
+        return self._monzo_oauth_client.invalidate_token()

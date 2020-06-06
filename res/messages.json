@@ -36,5 +36,6 @@
   "move_success": "I have successfully moved {amount} {currency} from {source} to {destination}!",
   "command_parse_error": "I couldn't understand this command. Please type \"help\" to get help on all of the commands I can understand.",
   "debug_parse_success": "Yay! I did understand this command!!! The params you gave me were parsed as: {params}",
-  "monzo_api_error": "Monzo won't let me do this, it told me: {error}."
+  "monzo_api_error": "Monzo won't let me do this, it told me: {error}.",
+  "logout_success": "I have successfully logged out of your Monzo account!"
 }
