@@ -4,7 +4,7 @@ from nio import MatrixRoom, RoomMessageText
 
 from matrix_monzo.bot_commands import Command, runner
 from matrix_monzo.messages import messages
-from matrix_monzo.utils import build_account_description
+from matrix_monzo.utils import build_account_description, search_through_accounts
 from matrix_monzo.utils.constants import LETTERS
 from matrix_monzo.utils.errors import InvalidParamsException, ProcessingError
 
@@ -234,7 +234,16 @@ class MoveCommand(Command):
                 )
 
         # Retrieve the accounts that might have a match in the params string.
-        account_matches = self._search_through_accounts(params_s, pots, accounts)
+        account_matches = search_through_accounts(params_s, pots, accounts)
+        for account_id, index in account_matches:
+            matches.append(
+                {
+                    "id": account_id,
+                    "type": DirectionTypes.ACCOUNT,
+                    "index": index
+                }
+            )
+
         matches += account_matches
 
         match_ids = [match["id"] for match in matches]
@@ -373,7 +382,7 @@ class MoveCommand(Command):
 
         def _search_in_accounts(s, param_key):
             # Try to match the param to an account.
-            account_matches = self._search_through_accounts(s, pots, accounts)
+            account_matches = search_through_accounts(s, pots, accounts)
 
             # If we got more than one match, or we got a match but we've already matched
             # a pot, then raise an error.
@@ -381,7 +390,7 @@ class MoveCommand(Command):
                 len(account_matches) and param_key in params.keys()
                 or len(account_matches) > 1
             ):
-                match_ids = [match["id"] for match in account_matches]
+                match_ids = [account_id for account_id, index in account_matches]
                 match_ids += [params[param_key]["id"]]
                 raise InvalidParamsException(
                     messages.get_content(
@@ -396,7 +405,7 @@ class MoveCommand(Command):
             # with it.
             if len(account_matches):
                 params[param_key] = {
-                    "id": account_matches[0]["id"],
+                    "id": account_matches[0][0],
                     "type": DirectionTypes.ACCOUNT,
                 }
 
@@ -407,6 +416,8 @@ class MoveCommand(Command):
         return params
 
     def _process_amount(self, amount: str) -> float:
+        # Currency names are stored in upper case.
+        amount = amount.upper()
         # Check if the param can be used as a number as is.
         if self._can_parse_into_float(amount):
             return float(amount)
@@ -430,51 +441,6 @@ class MoveCommand(Command):
                     currencies_and_symbols=", ".join(SUPPORTED_CURRENCIES),
                 )
             )
-
-    def _search_through_accounts(self, s: str, pots: dict, accounts: dict) -> List[dict]:
-        matches = []
-
-        # If there's only one account, then we can add "account" (so we match "my
-        # account", "main account", "current account", etc.) as the search term matching
-        # this account's ID.
-        if len(accounts) == 1:
-            # Before injecting the search term, make sure it doesn't clash with the name
-            # of a pot.
-            clashing_with_pot = False
-
-            for name in pots.keys():
-                if "account" in name:
-                    clashing_with_pot = True
-                    break
-
-            if not clashing_with_pot:
-                accounts["account"] = accounts[list(accounts.keys())[0]]
-
-        # Iterate over the accounts to see if one matches.
-        for search_params, account_id in accounts.items():
-            # Search terms for accounts are comma-separated, so turn that into a list.
-            search_terms = search_params.split(",")
-
-            # If either the search term or the account's ID is mentioned, then consider
-            # it a match.
-            for term in search_terms:
-                index = None
-
-                if term.casefold() in s:
-                    index = s.index(term.casefold())
-                elif account_id in s:
-                    index = s.index(account_id)
-
-                if index is not None:
-                    matches.append(
-                        {
-                            "id": account_id,
-                            "type": DirectionTypes.ACCOUNT,
-                            "index": index
-                        }
-                    )
-
-        return matches
 
     def _get_pots(self) -> dict:
         # Retrieve the list of pots for this user against the Monzo API.

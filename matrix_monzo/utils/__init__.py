@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List, Tuple
 
 from markdown import markdown
 
@@ -30,3 +30,46 @@ def build_account_description(account: dict) -> str:
         owners.append(owner["preferred_name"] + "'s")
 
     return "{owners} current account".format(owners="and".join(owners))
+
+
+def search_through_accounts(s: str, pots: dict, accounts: dict) -> List[Tuple[str, int]]:
+    # We can easily have duplicated entry if using a list, e.g. if there's only one
+    # account (so we inject the "account" search term) and the user uses the account's ID
+    # we'll end up with two matches for the same account ID.
+    matches = set()
+
+    # If there's only one account, then we can add "account" (so we match "my
+    # account", "main account", "current account", etc.) as the search term matching
+    # this account's ID.
+    if len(accounts) == 1:
+        # Before injecting the search term, make sure it doesn't clash with the name
+        # of a pot.
+        clashing_with_pot = False
+
+        for name in pots.keys():
+            if "account" in name:
+                clashing_with_pot = True
+                break
+
+        if not clashing_with_pot:
+            accounts["account"] = accounts[list(accounts.keys())[0]]
+
+    # Iterate over the accounts to see if one matches.
+    for search_params, account_id in accounts.items():
+        # Search terms for accounts are comma-separated, so turn that into a list.
+        search_terms = search_params.split(",")
+
+        # If either the search term or the account's ID is mentioned, then consider
+        # it a match.
+        for term in search_terms:
+            index = None
+
+            if term.casefold() in s:
+                index = s.index(term.casefold())
+            elif account_id.casefold() in s:
+                index = s.index(account_id.casefold())
+
+            if index is not None:
+                matches.add((account_id, index))
+
+    return list(matches)
