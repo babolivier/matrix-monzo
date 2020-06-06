@@ -1,0 +1,114 @@
+/* This style has been largely inspired by Monzo's authentication portal style. */
+/* All rights regarding that latter style are property of Monzo Bank Ltd. */
+
+/* montserrat-regular - latin */
+@font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 500;
+    src: local('Montserrat Regular'), local('Montserrat-Regular'),
+        url('static/fonts/montserrat/montserrat-v14-latin-500.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+        url('static/fonts/montserrat/montserrat-v14-latin-500.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* roboto-regular - latin */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Roboto'), local('Roboto-Regular'),
+        url('static/fonts/roboto/roboto-v20-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+        url('static/fonts/roboto/roboto-v20-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+html {
+    box-sizing: border-box;
+    cursor: default;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+body, html {
+    background-color: white;
+}
+body {
+    padding-top: 1em;
+    font-size: 14px;
+    line-height: 1.42857143;
+}
+body {
+    margin: 0;
+}
+footer, header, section {
+    display: block;
+}
+header {
+    margin-bottom: 30px;
+}
+footer {
+    color: #585858;
+    margin-top: 40px;
+}
+
+main {
+    display: block;
+}
+::-moz-selection {
+    background-color: #b3d4fc;
+    color: #000000;
+    text-shadow: none;
+}
+::selection {
+    background-color: #b3d4fc;
+    color: #000000;
+    text-shadow: none;
+}
+img {
+    border-style: none;
+}
+* {
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+}
+h2 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-family: inherit;
+    color: inherit;
+    font-weight: bold;
+    line-height: 1.1;
+    font-size: 30px;
+}
+.container {
+    text-align: center;
+    max-width: 650px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 3em;
+}
+@media only screen and (max-width: 650px) {
+    .container {
+        padding: 3em 1em;
+    }
+}
+.bluebox {
+    width: 100%;
+    padding: 54px;
+    border-radius: 4px;
+    background-color: #15233c;
+    color: white;
+    margin-bottom: 20px;
+    color: white;
+    font-size: 1.2em;
+    font-weight: normal;
+    line-height: 1.75em;
+}
+@media only screen and (max-width: 650px) {
+    .bluebox {
+        padding: 30px;
+    }
+}
+.bluebox h2 {
+    font-family: 'Montserrat';
+    padding-bottom: 1.75em;
+    border-bottom: 1px solid white;
+    margin-bottom: 1em;
+}

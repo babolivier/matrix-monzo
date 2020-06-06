@@ -1,4 +1,5 @@
 import logging
+import os
 
 from aiohttp import web
 
@@ -11,9 +12,13 @@ logger = logging.getLogger(__name__)
 async def start_http(instance: Instance):
     app = web.Application()
 
+    current_dir = os.path.dirname(__file__)
+    static_path = os.path.join(current_dir, "../../res/static")
+
     auth_callback = AuthCallbackHandler(instance)
 
     app.add_routes([
+        web.static("/static", static_path),
         web.get("/auth_callback", auth_callback.handler),
     ])
 
