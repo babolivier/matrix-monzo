@@ -6,7 +6,7 @@ from matrix_monzo.bot_commands import Command, runner
 from matrix_monzo.messages import messages
 from matrix_monzo.utils import build_account_description, search_through_accounts
 from matrix_monzo.utils.constants import LETTERS
-from matrix_monzo.utils.errors import InvalidParamsException, ProcessingError
+from matrix_monzo.utils.errors import InvalidParamsError, ProcessingError
 
 # TODO: we currently only support GBP, however Monzo is currently opening branches in the
 #  US so supporting USD as well would be nice.
@@ -45,7 +45,7 @@ class MoveCommand(Command):
         # We don't want to deal with transfers where the destination and the source are
         # the same. We could, if it's a pot, but it's better to just raise an error here.
         if params["source"]["id"] == params["destination"]["id"]:
-            raise InvalidParamsException(
+            raise InvalidParamsError(
                 messages.get_content("move_same_account_pot_error")
             )
 
@@ -251,7 +251,7 @@ class MoveCommand(Command):
         # We need two matches: one source and one destination. If we don't have that,
         # tell the user we can't process this result.
         if len(matches) != 2:
-            raise InvalidParamsException(
+            raise InvalidParamsError(
                 messages.get_content(
                     message_id="move_wrong_match_number_error",
                     nb_match=len(matches),
@@ -261,7 +261,7 @@ class MoveCommand(Command):
 
         # If both matches have the same index, then we don't really have two matches.
         if matches[0]["index"] == matches[1]["index"]:
-            raise InvalidParamsException(
+            raise InvalidParamsError(
                 messages.get_content("move_basic_parse_error")
             )
 
@@ -301,7 +301,7 @@ class MoveCommand(Command):
 
         # If one of the previous checks failed, raise the error.
         if err_content:
-            raise InvalidParamsException(err_content)
+            raise InvalidParamsError(err_content)
 
         params: Dict[str, Union[dict, str, float]] = {}
 
@@ -359,7 +359,7 @@ class MoveCommand(Command):
             # Tell the user that, and also tell them they can use IDs (which this error
             # message does).
             if len(match_ids) > 1:
-                raise InvalidParamsException(
+                raise InvalidParamsError(
                     messages.get_content(
                         message_id="move_wrong_number_for_direction_error",
                         direction=param_key,
@@ -392,7 +392,7 @@ class MoveCommand(Command):
             ):
                 match_ids = [account_id for account_id, index in account_matches]
                 match_ids += [params[param_key]["id"]]
-                raise InvalidParamsException(
+                raise InvalidParamsError(
                     messages.get_content(
                         message_id="move_wrong_number_for_direction_error",
                         direction=param_key,
@@ -435,7 +435,7 @@ class MoveCommand(Command):
             # If no match were found, then tell the user we don't support the currency.
             # We don't need the currency to do the transfer, so it's just a check to make
             # sure we do the transfer as the user intends.
-            raise InvalidParamsException(
+            raise InvalidParamsError(
                 messages.get_content(
                     message_id="move_unsupported_currency_error",
                     currencies_and_symbols=", ".join(SUPPORTED_CURRENCIES),

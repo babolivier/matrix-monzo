@@ -7,7 +7,7 @@ from oauthlib.oauth2.rfc6749.errors import MissingTokenError
 
 from matrix_monzo.messages import messages
 from matrix_monzo.utils import to_event_content
-from matrix_monzo.utils.errors import InvalidParamsException, ProcessingError
+from matrix_monzo.utils.errors import InvalidParamsError, ProcessingError
 from matrix_monzo.utils.instance import Instance
 
 COMMANDS = ["login", "show", "move", "transfer", "verify_device", "say", "logout"]
@@ -21,7 +21,7 @@ def runner(f):
             if not isinstance(res, dict):
                 return to_event_content(res)
             return res
-        except (InvalidParamsException, ProcessingError) as e:
+        except (InvalidParamsError, ProcessingError) as e:
             return e.message_content
         except ForbiddenError:
             return messages.get_content("monzo_token_insufficient_permissions")
@@ -63,7 +63,7 @@ class Command(abc.ABC):
             expected_params = " ".join([f'[{param}]' for param in self.PARAMS])
             usage = f'{self.PREFIX} {expected_params}'
 
-            raise InvalidParamsException(
+            raise InvalidParamsError(
                 messages.get_content(
                     message_id="invalid_params",
                     expected_params_number=len(self.PARAMS),

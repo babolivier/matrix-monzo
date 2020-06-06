@@ -26,7 +26,7 @@ class ClientError(Exception):
         self.message_content = message_content
 
 
-class InvalidParamsException(ClientError):
+class InvalidParamsError(ClientError):
     pass
 
 
