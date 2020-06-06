@@ -20,6 +20,7 @@
   "login": "To authenticate, please click [here]({login_url}) and follow the instructions.",
   "login_success": "You've successfully authenticated!",
   "login_need_app_action": "Please authorise me in your Monzo app to get access to all of my amazing features.",
+  "login_already_logged_in": "You are already logged in.",
   "pots": "Available pots:\n\n{pots}",
   "pot_entry": "* **{name}**, balance: {balance} {currency} (internal ID: {id})",
   "move_to_from_missing_error": "\"{param_found}\" was found in the command to indicate the {direction_found} of the transfer, but no \"{param_not_found}\" was found to indicate its {direction_not_found}.",

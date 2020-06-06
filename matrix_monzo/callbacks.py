@@ -108,9 +108,10 @@ class Callbacks:
             ignore_unverified_devices=True,
         )
 
-        await self.instance.nio_client.room_send(
-            room.room_id,
-            "m.room.message",
-            messages.get_content("welcome_message_p3"),
-            ignore_unverified_devices=True,
-        )
+        if not self.instance.is_logged_in():
+            await self.instance.nio_client.room_send(
+                room.room_id,
+                "m.room.message",
+                messages.get_content("welcome_message_p3"),
+                ignore_unverified_devices=True,
+            )

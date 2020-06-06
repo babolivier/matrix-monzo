@@ -1,7 +1,9 @@
 import logging
 
 from monzo import Monzo, MonzoOAuth2Client
+from monzo.errors import UnauthorizedError
 from nio import AsyncClient, AsyncClientConfig
+from oauthlib.oauth2.rfc6749.errors import MissingTokenError
 
 from matrix_monzo.config import Config
 from matrix_monzo.storage import Storage
@@ -88,3 +90,14 @@ class Instance:
             self._monzo_oauth_client.fetch_access_token(code=code),
             self.auths_in_progress[state],
         )
+
+    def is_logged_in(self) -> bool:
+        existing_token = self.storage.token_store.get_token(self.config.owner_id)
+        if existing_token is None:
+            return False
+
+        try:
+            self.monzo_client.get_accounts()
+            return True
+        except (UnauthorizedError, MissingTokenError):
+            return False

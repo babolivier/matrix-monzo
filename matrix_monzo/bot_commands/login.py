@@ -11,6 +11,9 @@ class LoginCommand(Command):
 
     @runner
     async def run(self, event: RoomMessageText, room: MatrixRoom):
+        if self.instance.is_logged_in():
+            return messages.get_content("login_already_logged_in")
+
         return messages.get_content(
             message_id="login",
             format_markdown=True,
