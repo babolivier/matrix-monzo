@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Union
 
 from nio import MatrixRoom, RoomMessageText
 
@@ -30,7 +30,7 @@ class MoveCommand(Command):
         # We also get the raw response from the accounts retrieval query so that we can
         # compute a nice name for the account when telling the user the command
         # succeeded.
-        accounts, raw_account_res = self._get_accounts()
+        accounts, raw_account_res = self.instance.get_monzo_accounts_for_search()
 
         # We need at least one account to move the amount, even if the transfer is
         # between two pots as the Monzo API doesn't support direct transfers between
@@ -219,7 +219,7 @@ class MoveCommand(Command):
                 if(
                     params_s[index - 1] in LETTERS
                     or params_s[index + len(name) + 1] in LETTERS
-                ) :
+                ):
                     index = None
             elif pot_id in params_s:
                 index = params_s.index(pot_id)
@@ -457,29 +457,6 @@ class MoveCommand(Command):
             pots[pot["name"].casefold()] = pot["id"]
 
         return pots
-
-    def _get_accounts(self) -> Tuple[dict, dict]:
-        # Retrieve the list of accounts for this user against the Monzo API.
-        res = self.instance.monzo_client.get_accounts()
-
-        # Iterate over the accounts and add the open accounts in a dict that maps search
-        # terms to an account's ID. Currently, the search terms is a comma-separated list
-        # of the account's owners.
-        accounts = {}
-        for account in res["accounts"]:
-            if account["closed"]:
-                continue
-
-            owners_names = []
-            for owner in account["owners"]:
-                owners_names.append(owner["preferred_name"])
-
-            # Format the list and case fold it so we don't run into issues because of the
-            # case.
-            key = ",".join(owners_names)
-            accounts[key.casefold()] = account["id"]
-
-        return accounts, res
 
     def _can_parse_into_float(self, s: str) -> bool:
         try:
