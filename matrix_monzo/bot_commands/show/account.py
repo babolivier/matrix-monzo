@@ -51,6 +51,7 @@ class AccountCommand(SubCommand):
             account_number=account["account_number"],
             sort_code=account["sort_code"],
             owners=owners,
+            creation_date=account["created"],  # TODO: make the date/time more human-readable
             id=account["id"],
         )
 
