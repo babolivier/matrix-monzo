@@ -1,6 +1,5 @@
 from typing import Dict
 
-import dateutil.parser
 from nio import MatrixRoom, RoomMessageText
 
 from matrix_monzo.bot_commands import runner, SubCommand
