@@ -1,5 +1,6 @@
 from typing import Dict, List, Tuple
 
+import dateutil.parser
 from markdown import markdown
 
 from matrix_monzo.utils.constants import DEFAULT_MSG_TYPE, MsgFormat
@@ -73,3 +74,25 @@ def search_through_accounts(s: str, pots: dict, accounts: dict) -> List[Tuple[st
                 matches.add((account_id, index))
 
     return list(matches)
+
+
+def format_date(date_iso: str) -> str:
+    creation_date = dateutil.parser.parse(date_iso)
+
+    utc_offset = int(creation_date.utcoffset().total_seconds() / 3600)
+
+    timezone = "UTC"
+    if utc_offset > 0:
+        timezone += "+%d" % utc_offset
+    elif utc_offset < 0:
+        timezone += "-%d" % -utc_offset
+
+    return "%02d/%02d/%d (%02d:%02d:%02d %s)" % (
+        creation_date.day,
+        creation_date.month,
+        creation_date.year,
+        creation_date.hour,
+        creation_date.minute,
+        creation_date.second,
+        timezone,
+    )

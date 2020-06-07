@@ -1,10 +1,15 @@
-from typing import Any, Dict, List
+from typing import Dict
 
+import dateutil.parser
 from nio import MatrixRoom, RoomMessageText
 
 from matrix_monzo.bot_commands import runner, SubCommand
 from matrix_monzo.messages import messages
-from matrix_monzo.utils import build_account_description, search_through_accounts
+from matrix_monzo.utils import (
+    build_account_description,
+    format_date,
+    search_through_accounts,
+)
 from matrix_monzo.utils.errors import InvalidParamsError
 
 
@@ -51,7 +56,7 @@ class AccountCommand(SubCommand):
             account_number=account["account_number"],
             sort_code=account["sort_code"],
             owners=owners,
-            creation_date=account["created"],  # TODO: make the date/time more human-readable
+            creation_date=format_date(account["created"]),
             id=account["id"],
         )
 
