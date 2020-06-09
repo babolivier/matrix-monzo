@@ -96,4 +96,5 @@ class AccountCommand(SubCommand):
             )
         )
 
+
 command_class = AccountCommand
