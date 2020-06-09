@@ -41,5 +41,9 @@
   "show_one_no_match_error": "I've found no matching {entity}.",
   "show_one_too_many_matches_error": "I've found more than one matching {entity} (their internal IDs are: {match_ids}).\n\nTo make this less ambiguous for me, could you please replace the {entity} name with its internal ID? You can find it by typing \"show {entity}s\".",
   "show_one_account_res": "**{description}**:\n\n* **Balance**: {balance_with_currency}\n* **Country code**: {country_code}\n* **Account number**: {account_number}\n* **Sort code**: {sort_code}\n* **Owners**: {owners}\n* **Creation date**: {creation_date}\n* **Internal ID**: {id}",
-  "show_one_account_owner_entry": "    * {name}"
+  "show_one_account_owner_entry": "    * {name}",
+  "show_one_pot_res": "**{name}**:\n\n* **Balance**: {balance_with_currency}\n* **Type**: {type}\n* **Rounds up transactions**: {round_up}\n* **Locked**: {locked}\n* **Can be used for bills**: {bills}\n* **Creation date**: {creation_date}\n* **Last update**: {last_update}\n* **Internal ID**: {id}",
+  "show_one_pot_type_default": "Normal pot",
+  "show_one_pot_type_flexible_savings": "Flexible savings pot",
+  "show_one_pot_type_unknown": "Unknown type ({type}) - [please tell my maintainer about this!](https://github.com/babolivier/matrix-monzo/issues/8)"
 }

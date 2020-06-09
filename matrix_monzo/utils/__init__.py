@@ -96,3 +96,7 @@ def format_date(date_iso: str) -> str:
         creation_date.second,
         timezone,
     )
+
+
+def format_bool(value: bool) -> str:
+    return "Yes" if value else "No"
