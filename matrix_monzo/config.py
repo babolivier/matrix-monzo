@@ -72,6 +72,8 @@ class Config(object):
             raise ConfigError("matrix.password is a required field")
 
         self.device_id = matrix.get("device_id")
+        if not self.device_id:
+            raise ConfigError("matrix.device_id is a required field")
 
         self.homeserver_url = matrix.get("homeserver_url")
         if not self.homeserver_url:
