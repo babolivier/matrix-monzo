@@ -128,3 +128,19 @@ class Instance:
 
         return accounts, res
 
+    def get_monzo_pots_for_search(self) -> Tuple[dict, dict]:
+        # Retrieve the list of pots for this user against the Monzo API.
+        res = self.monzo_client.get_pots()
+
+        # Iterate over the pots and add the non-deleted pots in a dict that maps the
+        # pot's name to its ID.
+        pots = {}
+        for pot in res["pots"]:
+            if pot["deleted"]:
+                continue
+
+            # Case fold the pot's name so we don't run into issues because of the case.
+            pots[pot["name"].casefold()] = pot["id"]
+
+        return pots, res
+

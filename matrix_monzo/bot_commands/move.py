@@ -26,7 +26,7 @@ class MoveCommand(Command):
     @runner
     async def run(self, event: RoomMessageText, room: MatrixRoom):
         # Get the pots and accounts for this user from the API.
-        pots = self._get_pots()
+        pots, _ = self.instance.get_monzo_pots_for_search()
         # We also get the raw response from the accounts retrieval query so that we can
         # compute a nice name for the account when telling the user the command
         # succeeded.
@@ -441,22 +441,6 @@ class MoveCommand(Command):
                     currencies_and_symbols=", ".join(SUPPORTED_CURRENCIES),
                 )
             )
-
-    def _get_pots(self) -> dict:
-        # Retrieve the list of pots for this user against the Monzo API.
-        res = self.instance.monzo_client.get_pots()
-
-        # Iterate over the pots and add the non-deleted pots in a dict that maps the
-        # pot's name to its ID.
-        pots = {}
-        for pot in res["pots"]:
-            if pot["deleted"]:
-                continue
-
-            # Case fold the pot's name so we don't run into issues because of the case.
-            pots[pot["name"].casefold()] = pot["id"]
-
-        return pots
 
     def _can_parse_into_float(self, s: str) -> bool:
         try:
