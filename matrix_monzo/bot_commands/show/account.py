@@ -76,7 +76,7 @@ class AccountCommand(SubCommand):
                 messages.get_content(
                     message_id="show_one_too_many_matches_error",
                     entity="account",
-                    match_ids=[account_id for account_id, index in matches],
+                    match_ids=", ".join([account_id for account_id, index in matches]),
                 )
             )
 
