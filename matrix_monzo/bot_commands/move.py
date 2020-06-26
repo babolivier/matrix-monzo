@@ -4,8 +4,11 @@ from nio import MatrixRoom, RoomMessageText
 
 from matrix_monzo.bot_commands import Command, runner
 from matrix_monzo.messages import messages
-from matrix_monzo.utils import build_account_description, search_through_accounts
-from matrix_monzo.utils.constants import LETTERS
+from matrix_monzo.utils import (
+    build_account_description,
+    find_search_term_in_string,
+    search_through_accounts
+)
 from matrix_monzo.utils.errors import InvalidParamsError, ProcessingError
 
 # TODO: we currently only support GBP, however Monzo is currently opening branches in the
@@ -213,14 +216,9 @@ class MoveCommand(Command):
         for name, pot_id in pots.items():
             index = None
 
-            if name.casefold() in params_s:
-                # Don't match the name of the pot if it's part of a word.
-                index = params_s.index(name.casefold())
-                if(
-                    params_s[index - 1] in LETTERS
-                    or params_s[index + len(name) + 1] in LETTERS
-                ):
-                    index = None
+            name_index = find_search_term_in_string(name, params_s)
+            if name_index >= 0:
+                index = name_index
             elif pot_id in params_s:
                 index = params_s.index(pot_id)
 
@@ -243,8 +241,6 @@ class MoveCommand(Command):
                     "index": index
                 }
             )
-
-        matches += account_matches
 
         match_ids = [match["id"] for match in matches]
 
@@ -344,8 +340,8 @@ class MoveCommand(Command):
             for name, pot_id in pots.items():
                 if name in s:
                     # Don't match the name of the pot if it's part of a word.
-                    index = s.index(name)
-                    if not s[index-1] in LETTERS and not s[index+len(name)+1] in LETTERS:
+                    index = find_search_term_in_string(name, s)
+                    if index >= 0:
                         match_ids.append(pot_id)
                 elif pot_id.casefold() in s:
                     params[param_key] = {

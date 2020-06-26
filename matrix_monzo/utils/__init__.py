@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple
 import dateutil.parser
 from markdown import markdown
 
-from matrix_monzo.utils.constants import DEFAULT_MSG_TYPE, MsgFormat
+from matrix_monzo.utils.constants import DEFAULT_MSG_TYPE, LETTERS, MsgFormat
 
 
 def to_event_content(
@@ -65,8 +65,9 @@ def search_through_accounts(s: str, pots: dict, accounts: dict) -> List[Tuple[st
         for term in search_terms:
             index = None
 
-            if term.casefold() in s:
-                index = s.index(term.casefold())
+            term_index = find_search_term_in_string(term, s)
+            if term_index >= 0:
+                index = term_index
             elif account_id.casefold() in s:
                 index = s.index(account_id.casefold())
 
@@ -74,6 +75,23 @@ def search_through_accounts(s: str, pots: dict, accounts: dict) -> List[Tuple[st
                 matches.add((account_id, index))
 
     return list(matches)
+
+
+def find_search_term_in_string(search_term: str, s: str) -> int:
+    search_term = search_term.casefold()
+
+    if search_term in s:
+        index = s.index(search_term)
+        # Don't match the search term if it's part of a word.
+        if (
+            (not s.startswith(search_term) and s[index - 1] in LETTERS)
+            or (not s.endswith(search_term) and s[index + len(search_term)] in LETTERS)
+        ):
+            return -1
+
+        return index
+    else:
+        return -1
 
 
 def format_date(date_iso: str) -> str:
