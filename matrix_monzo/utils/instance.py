@@ -1,5 +1,5 @@
 import logging
-from typing import Tuple
+from typing import Dict, Tuple
 
 from monzo import Monzo, MonzoOAuth2Client
 from monzo.errors import UnauthorizedError
@@ -105,7 +105,7 @@ class Instance:
     def invalidate_monzo_token(self):
         return self._monzo_oauth_client.invalidate_token()
 
-    def get_monzo_accounts_for_search(self) -> Tuple[dict, dict]:
+    def get_monzo_accounts_for_search(self) -> Tuple[Dict[Tuple, str], dict]:
         # Retrieve the list of accounts for this user against the Monzo API.
         res = self.monzo_client.get_accounts()
 
@@ -121,14 +121,11 @@ class Instance:
             for owner in account["owners"]:
                 owners_names.append(owner["preferred_name"])
 
-            # Format the list and case fold it so we don't run into issues because of the
-            # case.
-            key = ",".join(owners_names)
-            accounts[key.casefold()] = account["id"]
+            accounts[tuple(owners_names)] = account["id"]
 
         return accounts, res
 
-    def get_monzo_pots_for_search(self) -> Tuple[dict, dict]:
+    def get_monzo_pots_for_search(self) -> Tuple[Dict[str, str], dict]:
         # Retrieve the list of pots for this user against the Monzo API.
         res = self.monzo_client.get_pots()
 

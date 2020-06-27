@@ -33,7 +33,9 @@ def build_account_description(account: dict) -> str:
     return "{owners} current account".format(owners="and".join(owners))
 
 
-def search_through_accounts(s: str, pots: dict, accounts: dict) -> List[Tuple[str, int]]:
+def search_through_accounts(
+        s: str, pots: Dict[str, str], accounts: Dict[Tuple, str],
+) -> List[Tuple[str, int]]:
     # We can easily have duplicated entry if using a list, e.g. if there's only one
     # account (so we inject the "account" search term) and the user uses the account's ID
     # we'll end up with two matches for the same account ID.
@@ -53,16 +55,13 @@ def search_through_accounts(s: str, pots: dict, accounts: dict) -> List[Tuple[st
                 break
 
         if not clashing_with_pot:
-            accounts["account"] = accounts[list(accounts.keys())[0]]
+            accounts[("account",)] = accounts[list(accounts.keys())[0]]
 
     # Iterate over the accounts to see if one matches.
     for search_params, account_id in accounts.items():
-        # Search terms for accounts are comma-separated, so turn that into a list.
-        search_terms = search_params.split(",")
-
         # If either the search term or the account's ID is mentioned, then consider
         # it a match.
-        for term in search_terms:
+        for term in search_params:
             index = None
 
             term_index = find_search_term_in_string(term, s)
