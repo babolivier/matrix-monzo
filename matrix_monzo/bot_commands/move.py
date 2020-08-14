@@ -53,7 +53,7 @@ class MoveCommand(Command):
             )
 
         # Actually do the transfer.
-        self._do_transfer(params, pots, accounts)
+        self._do_transfer(params, pots, event.sender)
 
         # Build a user-friendly description for the source and the destination.
         source_name = self._build_direction_description(
@@ -108,7 +108,7 @@ class MoveCommand(Command):
         # just use the ID.
         return direction["id"]
 
-    def _do_transfer(self, params: dict, pots, accounts):
+    def _do_transfer(self, params: dict, pots, user_id):
         # Convert the amount into pennies/cents, as that's what the Monzo API expects.
         amount_in_pennies = int(params["amount"] * 100)
 
@@ -143,7 +143,16 @@ class MoveCommand(Command):
             # account, and finally deposit to the second pot from the account.
             # We use this kind of convoluted way of doing things because Monzo doesn't
             # allow direct pot to pot transfers.
-            account_id = accounts[list(accounts.keys())[0]]
+            res = (
+                self.instance.storage.selected_account_store.get_selected_account(
+                    user_id,
+                )
+            )
+
+            if not res:
+                raise ProcessingError(messages.get_content("no_selected_account_error"))
+
+            account_id = res[0][0]
 
             self.instance.monzo_client.withdraw_from_pot(
                 account_id=account_id,

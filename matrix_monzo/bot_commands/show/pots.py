@@ -19,7 +19,7 @@ class PotsCommand(SubCommand):
     async def run_with_params(
             self, params: str, event: RoomMessageText, room: MatrixRoom,
     ) -> Dict[str, str]:
-        res = self.instance.monzo_client.get_pots()
+        res = self.instance.get_monzo_pots_for_selected_account()
 
         pots = []
         for pot in res["pots"]:

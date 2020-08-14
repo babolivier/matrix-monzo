@@ -67,14 +67,14 @@ class AccountCommand(SubCommand):
         if not matches:
             raise InvalidParamsError(
                 messages.get_content(
-                    message_id="show_one_no_match_error",
+                    message_id="no_match_error",
                     entity="account",
                 )
             )
         elif len(matches) > 1:
             raise InvalidParamsError(
                 messages.get_content(
-                    message_id="show_one_too_many_matches_error",
+                    message_id="too_many_matches_error",
                     entity="account",
                     match_ids=", ".join([account_id for account_id, index in matches]),
                 )
@@ -91,7 +91,7 @@ class AccountCommand(SubCommand):
 
         raise InvalidParamsError(
             messages.get_content(
-                message_id="show_one_no_match_error",
+                message_id="no_match_error",
                 entity="account",
             )
         )

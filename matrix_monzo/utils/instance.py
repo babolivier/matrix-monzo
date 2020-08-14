@@ -7,17 +7,15 @@ from nio import AsyncClient, AsyncClientConfig
 from oauthlib.oauth2.rfc6749.errors import MissingTokenError
 
 from matrix_monzo.config import Config
+from matrix_monzo.messages import messages
 from matrix_monzo.storage import Storage
-from matrix_monzo.utils.errors import MonzoInvalidStateError
+from matrix_monzo.utils.errors import MonzoInvalidStateError, ProcessingError
 
 logger = logging.getLogger(__name__)
 
 
 class Instance:
-    def __init__(
-            self,
-            config: Config,
-    ):
+    def __init__(self, config: Config):
         self.config = config
 
         self.storage = Storage(self.config.database)
@@ -126,8 +124,7 @@ class Instance:
         return accounts, res
 
     def get_monzo_pots_for_search(self) -> Tuple[Dict[str, str], dict]:
-        # Retrieve the list of pots for this user against the Monzo API.
-        res = self.monzo_client.get_pots()
+        res = self.get_monzo_pots_for_selected_account()
 
         # Iterate over the pots and add the non-deleted pots in a dict that maps the
         # pot's name to its ID.
@@ -140,4 +137,15 @@ class Instance:
             pots[pot["name"].casefold()] = pot["id"]
 
         return pots, res
+
+    def get_monzo_pots_for_selected_account(self) -> dict:
+        res = self.storage.selected_account_store.get_selected_account(
+            self.config.owner_id,
+        )
+
+        if not res:
+            raise ProcessingError(messages.get_content("no_selected_account_error"))
+
+        # Retrieve the list of pots for this user against the Monzo API.
+        return self.monzo_client.get_pots(res[0][0])
 

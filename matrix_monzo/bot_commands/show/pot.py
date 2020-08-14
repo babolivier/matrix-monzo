@@ -71,14 +71,14 @@ class PotCommand(SubCommand):
         if not matches:
             raise InvalidParamsError(
                 messages.get_content(
-                    message_id="show_one_no_match_error",
+                    message_id="no_match_error",
                     entity="pot",
                 )
             )
         elif len(matches) > 1:
             raise InvalidParamsError(
                 messages.get_content(
-                    message_id="show_one_too_many_matches_error",
+                    message_id="too_many_matches_error",
                     entity="pot",
                     match_ids=", ".join([pot_id for pot_id in matches]),
                 )
@@ -95,7 +95,7 @@ class PotCommand(SubCommand):
 
         raise InvalidParamsError(
             messages.get_content(
-                message_id="show_one_no_match_error",
+                message_id="no_match_error",
                 entity="pot",
             )
         )
